@@ -475,7 +475,7 @@ p {
   border-radius: 14px;
   background: linear-gradient(180deg, var(--highlight-image-bg-start), var(--highlight-image-bg-end));
   overflow: hidden;
-  height: 220px;
+  height: 150px;
 }
 
 .highlight-image-card img {
