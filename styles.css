@@ -442,7 +442,7 @@ p {
 .overview-card h3 {
   margin: 0;
   text-align: left;
-  font-size: clamp(1.35rem, 2.5vw, 1.95rem);
+  font-size: 1.5rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
@@ -1375,7 +1375,7 @@ body.modal-open {
   }
 
   .overview-card h3 {
-    font-size: clamp(1.3rem, 5.8vw, 1.75rem);
+    font-size: 1.85rem;
   }
 
   .overview-card > p:last-child {
