@@ -25,17 +25,17 @@ window.PORTFOLIO_DATA = {
     {
       video: "assets/videos/video1.mp4",
       title: "CUBESAT",
-      description: "CLSI NASA program launch for April 2026.",
+      description: "CLSI NASA program launch for April 2026",
     },
     {
       video: "assets/videos/video2.mp4",
-      title: "Vision Valve",
-      description: "multimodal particle image-recognition in water filtration at 4x throughput compared to industry models",
+      title: "VISION VALVE",
+      description: "water filtration system with 4x throughput vs industry standard",
     },
     {
       video: "assets/videos/video3.mp4",
       title: "CHEETAH: ACINONYX GENETICS",
-      description: "Optimized Breeding Program For Genetic Bottlenecks.",
+      description: "optimized breeding program for genetic bottlenecks",
     },
   ],
   projectGroups: [

@@ -397,7 +397,7 @@ p {
 
 /* Overview card style in the High-Level Overview section */
 .overview-card {
-  min-height: 420px;
+  min-height: 350px;
   border: 1px solid var(--overview-card-border);
   border-radius: 28px;
   background:
@@ -450,7 +450,6 @@ p {
 .overview-card > p:last-child {
   text-align: left;
   color: var(--overview-body-color);
-  font-size: 1.2rem;
   line-height: 1.55;
   max-width: 30ch;
 }
