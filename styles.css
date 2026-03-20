@@ -398,7 +398,7 @@ p {
 
 /* Overview card style in the High-Level Overview section */
 .overview-card {
-  min-height: 350px;
+  min-height: 275px;
   border: 1px solid var(--overview-card-border);
   border-radius: 28px;
   background:
