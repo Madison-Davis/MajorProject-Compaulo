@@ -449,7 +449,7 @@ p {
 
 .overview-card > p:last-child {
   text-align: left;
-  color: var(--overview-body-color);
+  color: var(--color-text-muted);
   line-height: 1.55;
   max-width: 30ch;
 }
