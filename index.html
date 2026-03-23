@@ -145,7 +145,7 @@
   <script src="data.js"></script>
   <script>
     const data = window.PORTFOLIO_DATA || {
-      featuredProjects: [],
+      featuredPublications: [],
       featuredVideos: [],
       projectGroups: [],
       publications: [],
@@ -166,9 +166,9 @@
     const pdfClose = document.querySelector("#pdf-modal-close");
     const pdfModalTitle = document.querySelector("#pdf-modal-title");
 
-    const renderProjects = () => {
+    const renderFeaturedPublications = () => {
       if (projectCardsEl) {
-        projectCardsEl.innerHTML = data.featuredProjects
+        projectCardsEl.innerHTML = data.featuredPublications
           .map(
             (project) => `
               <article class="project-card highlighted-card reveal">
@@ -179,7 +179,7 @@
                   <div class="highlight-text-card">
                     <div class="highlight-title-row">
                       <h3>${project.title}</h3>
-                      <a class="highlight-link" href="${project.link || "#"}" aria-label="View ${project.title}">↗</a>
+                      <a class="highlight-link" href="${project.link || "#"}" target="_blank" aria-label="View ${project.title}">↗</a>
                     </div>
                     <p>${project.description}</p>
                   </div>
@@ -257,7 +257,9 @@
                             <td>${row.title}</td>
                             <td>${row.year}</td>
                             <td>${row.description}</td>
-                            <td><a href="${row.link || "#"}">Link</a></td>
+                            <td>
+                            ${row.link === "#" ? "-" : `<a href="${row.link}" target="_blank">Link</a>`}
+                            </td>
                           </tr>
                         `
                       )
@@ -300,7 +302,7 @@
                           <td>${publication.title}</td>
                           <td>
                             ${publication.pdf || publication.link
-                              ? `<a href="#" data-pdf="${publication.pdf || publication.link || "#"}" data-title="${publication.title}">Link</a>`
+                              ? `<a href="${publication.pdf || publication.link}" target="_blank">Link</a>`
                               : "-"}
                           </td>
                         </tr>
@@ -315,7 +317,7 @@
       `;
     };
 
-    renderProjects();
+    renderFeaturedPublications();
     renderPublications();
 
     const openPdfModal = (pdfPath, title) => {

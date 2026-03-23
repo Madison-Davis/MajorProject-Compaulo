@@ -1,23 +1,24 @@
 window.PORTFOLIO_DATA = {
-  featuredProjects: [
+  featuredPublications: [
     {
       title: "Compositional Diffusion Language Models",
       description:
         "2025",
-      image: "assets/images/highlight1.png",
+      image: "assets/research/highlight1.png",
+      link: "assets/research/compositional-diffusion.pdf",
     },
     {
       title: "PCRB Tiered Prioritized Replay Buffer",
       description:
         "2025",
-      image: "assets/images/highlight2.png",
+      image: "assets/research/highlight2.png",
       link: "assets/research/tiered-replay-buffer.pdf",
     },
     {
       title: "NPG Crystalline Reinforcement Learning",
       description:
         "2024",
-      image: "assets/images/highlight3.png",
+      image: "assets/research/highlight3.png",
       link: "assets/research/crystalline.pdf",
     },
   ],
@@ -65,7 +66,7 @@ window.PORTFOLIO_DATA = {
           title: "Climate.xyz",
           year: "2023",
           description: "Trained language models on multimodal data for optimized user journies through energy investment.",
-          link: "#",
+          link: "assets/work/climate.pdf",
         },
         {
           title: "Phuc Laboratories",
@@ -77,7 +78,7 @@ window.PORTFOLIO_DATA = {
           title: "Clark Scholar",
           year: "2021",
           description: "Developed research on CNN architectures to extract best inputs for CT lung scans.",
-          link: "#",
+          link: "assets/work/clark.pdf",
         },
         {
           title: "LPBI",
@@ -108,12 +109,13 @@ window.PORTFOLIO_DATA = {
           year: "2021",
           description: "Educational platform teaching users the process of rescuing and rehabilitating African penguins.",
           link: "#",
+          link: "https://github.com/Madison-Davis/MajorProject-SANCCOB",
         },
         {
           title: "Shedd",
           year: "2016",
           description: "Educational platform of Shedd Aquarium, involving maritime model rigging/animation and persistent data-store systems.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/MajorProject-Shedd",
         },
       ],
     },
@@ -128,7 +130,7 @@ window.PORTFOLIO_DATA = {
           link: "#",
         },
         {
-          title: "CS 2411",
+          title: "CS 2050",
           year: "2026",
           description: "High Performance Computing: parallelization, OpenMP, MPI, CUDA, vectorization.",
           link: "#",
@@ -137,31 +139,43 @@ window.PORTFOLIO_DATA = {
           title: "CS 2420",
           year: "2025",
           description: "Computing at Scale: Transformers, FPUs, GPUs/TPUs, ViTs, GANs, DINO, diffusion, contrastive learning, knowledge distillation.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS2420-ComputingAtScale",
+        },
+        {
+          title: "CS 2241",
+          year: "2025",
+          description: "Algorithms Across the Wire: compression, encodings, quantization, bloom/cuckoo filters, count sketches",
+          link: "https://github.com/Madison-Davis/Courses-CS2241-AlgsForBigData-Final",
         },
         {
           title: "CS 2630",
           year: "2025",
           description: "System Security: stack protocols, ROP, TLS, OCSP, Tor, SGX, and more.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS2630-Final-Project",
+        },
+        {
+          title: "CS 2620",
+          year: "2023",
+          description: "Distributed Systems: CAP Theorem, Protobufs, Sockets, Paxos",
+          link: "https://github.com/Madison-Davis/Courses-CS2620-DistributedSystems",
         },
         {
           title: "CS 2880",
           year: "2023",
           description: "AI for Social Impact: developed divisive hierarchical clustering for cheetah breeding.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS2880-AISocialImpact",
         },
         {
           title: "CS 1840",
           year: "2024",
           description: "Reinforcement Learning: Markov, REINFORCE, PPO, NPG, imitation learning",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS1840-ReinforcementLearning",
         },
         {
           title: "CS 1530",
           year: "2023",
           description: "Compilers: produced in-house Oat V153 compiler with parsing, checking, IR, linkage/loading.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS1530-Compilers",
         },
         {
           title: "CS 1410",
@@ -173,13 +187,13 @@ window.PORTFOLIO_DATA = {
           title: "CS 0061",
           year: "2022",
           description: "Computer Systems: Memory, Assembly, Kernel, Pipelines, and Shell",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS61-MachineSystems",
         },
         {
           title: "PHYS 70",
           year: "2025",
           description: "Digital Fabrication: metalwork, soldering, lasers, water jets, wireless control, CNC mill, CAD, PCB production.",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-PHYS70-DigitalFabrication",
         },
         {
           title: "ECON 2726",
