@@ -15,8 +15,8 @@
   --color-border: #202020;
   --color-border-hover: #404040;
   --color-text: #f3f5f8;
-  --color-text-muted: #545454;
-  --color-text-dim: #9c9c9c;
+  --color-text-muted: #a6a6a6;
+  --color-text-dim: #a6a6a6;
   --color-accent: #dddddd;
   --color-accent-strong: #ffffff;
 
@@ -174,7 +174,7 @@ p {
    Shared Layout
    ========================================================================== */
 .container {
-  width: 57%;
+  width: 55%;
   margin: 0 auto;
 }
 
@@ -1427,3 +1427,129 @@ body.modal-open {
     height: min(88vh, 760px);
   }
 }
+
+/* ==========================================================================
+   PARALLAX VIDEO FIELD (RESET + FIXED)
+   ========================================================================== */
+
+.parallax-section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 0;
+  margin-top: 200px;
+  margin-bottom: 200px;
+}
+
+ /* vignette */
+.parallax-section::before,
+.parallax-section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.parallax-section::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.95),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.parallax-section::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.parallax-container {
+  position: relative;
+  width: 55%;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parallax-stage {
+  position: relative;
+  min-height: 140vh;
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+}
+
+/* center text overlay */
+.parallax-center-text {
+  position: absolute;
+  z-index: 20;
+  text-align: center;
+  max-width: 60ch;
+  pointer-events: none;
+}
+
+.parallax-title {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.parallax-subtitle {
+  color: var(--color-text-muted);
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+}
+
+/* card */
+.parallax-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  aspect-ratio: 0.67;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--overview-card-border);
+  box-shadow: var(--shadow-soft);
+  transform-style: preserve-3d;
+  will-change: transform;
+  background: #111;
+
+  transform-origin: center;
+}
+
+/* video fill */
+.parallax-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* depth styling */
+.parallax-front {
+  z-index: 10;
+  filter: brightness(0.33);
+}
+
+.parallax-mid {
+  z-index: 5;
+  filter: brightness(0.33);
+}
+
+.parallax-back {
+  z-index: 2;
+  filter: brightness(0.33);
+}
+

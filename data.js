@@ -22,6 +22,17 @@ window.PORTFOLIO_DATA = {
       link: "assets/research/crystalline.pdf",
     },
   ],
+  allVideos: [
+    "assets/videos/video1.mp4",
+    "assets/videos/video2.mp4",
+    "assets/videos/video3.mp4",
+    "assets/videos/video4.mp4",
+    "assets/videos/video5.mp4",
+    "assets/videos/video6.mp4",
+    "assets/videos/video7.mp4",
+    "assets/videos/video8.mp4",
+    "assets/videos/video9.mp4",
+  ],
   featuredVideos: [
     {
       video: "assets/videos/video1.mp4",

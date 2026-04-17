@@ -64,6 +64,18 @@
       </div>
     </section>
 
+    <section id="parallax-showcase" class="parallax-section">
+      <div class="container parallax-container">
+        <div class="parallax-center-text reveal">
+          <h2 class="parallax-title">MULTIDISCIPLINARY</h2>
+          <p class="parallax-subtitle">
+            from ecological to industrial
+          </p>
+        </div>
+        <div id="parallax-stage" class="parallax-stage"></div>
+      </div>
+    </section>
+
     <section id="projects" class="section reveal">
       <div class="container">
         <h2 class="section-title">PROJECTS</h2>
@@ -470,6 +482,100 @@
         panel.style.maxHeight = `${panel.scrollHeight}px`;
       });
     });
+
+const parallaxStage = document.querySelector("#parallax-stage");
+let parallaxCards = [];
+
+const buildParallaxVideos = () => {
+  if (!parallaxStage) return;
+
+  const videos = data.allVideos || [];
+  const n = videos.length;
+
+  parallaxStage.innerHTML = videos
+    .map((src, i) => {
+      const depth =
+        i % 3 === 0 ? "parallax-front" :
+        i % 3 === 1 ? "parallax-mid" :
+                      "parallax-back";
+
+      const x = 10 + Math.random() * 80;
+      const baseY = Math.random() * 100;
+
+      return `
+        <div class="parallax-card ${depth}"
+          data-x="${x}"
+          data-basey="${baseY}">
+          <video autoplay muted loop playsinline>
+            <source src="${src}" type="video/mp4" />
+          </video>
+        </div>
+      `;
+    })
+    .join("");
+
+  parallaxCards = Array.from(document.querySelectorAll(".parallax-card"));
+};
+
+buildParallaxVideos();
+
+
+// ===============================
+// SCROLL STATE (SAFE)
+// ===============================
+
+let lastScrollY = window.scrollY;
+let scrollOffset = 0;
+
+window.addEventListener("scroll", () => {
+  const currentY = window.scrollY;
+  const delta = currentY - lastScrollY;
+
+  // apply opposite-direction movement
+  scrollOffset += -delta * 0.005;
+
+  lastScrollY = currentY;
+});
+
+
+// ===============================
+// RENDER LOOP
+// ===============================
+
+const updateParallax = () => {
+  const rect = parallaxStage.getBoundingClientRect();
+  const W = rect.width;
+  const H = rect.height;
+
+  const idleGravity = 0.025;
+
+  // slow drift when not scrolling
+  scrollOffset += idleGravity;
+
+  parallaxCards.forEach((card) => {
+    const x = parseFloat(card.dataset.x);
+    const baseY = parseFloat(card.dataset.basey);
+
+    const finalY = baseY + scrollOffset;
+
+    const scale =
+      card.classList.contains("parallax-front") ? 1.05 :
+      card.classList.contains("parallax-mid") ? 0.98 :
+      0.92;
+
+    const xPx = (x / 100) * W;
+    const yPx = (finalY / 100) * H;
+
+    card.style.transform = `
+      translate3d(${xPx}px, ${yPx}px, 0)
+      scale(${scale})
+    `;
+  });
+
+  requestAnimationFrame(updateParallax);
+};
+
+requestAnimationFrame(updateParallax);
   </script>
 </body>
 </html>
