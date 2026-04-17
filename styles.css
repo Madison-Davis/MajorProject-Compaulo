@@ -483,7 +483,7 @@ p {
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
-  filter: grayscale(5%) brightness(0.95);
+  filter: grayscale(5%) opacity(0.5);
 }
 
 .highlight-text-card {
@@ -504,18 +504,19 @@ p {
 
 .highlight-text-card h3 {
   text-align: left;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
 .highlight-text-card p {
   text-align: left;
-  color: var(--highlight-body-text);
+  color: var(--color-text-muted);
   font-size: 0.93rem;
 }
 
 .highlight-link {
   display: inline-block;
-  color: var(--highlight-link-text);
+  color: var(--color-text-muted);
   font-size: 1.1rem;
   font-weight: 700;
   line-height: 1;
