@@ -485,22 +485,60 @@
 
 const parallaxStage = document.querySelector("#parallax-stage");
 let parallaxCards = [];
-
 const buildParallaxVideos = () => {
   if (!parallaxStage) return;
 
   const videos = data.allVideos || [];
   const n = videos.length;
 
-  parallaxStage.innerHTML = videos
-    .map((src, i) => {
+  // ===============================
+  // FIXED VISIBLE SET SIZE
+  // ===============================
+  const visibleCount = 10;
+
+  const laneHeight = 30;
+  const xThreshold = 30;
+
+  const lanes = [];
+
+  parallaxStage.innerHTML = Array.from({ length: visibleCount })
+    .map((_, i) => {
+      // ===============================
+      // REPEAT VIDEOS (CYCLING)
+      // ===============================
+      const src = videos[i % n];
+
       const depth =
         i % 3 === 0 ? "parallax-front" :
         i % 3 === 1 ? "parallax-mid" :
                       "parallax-back";
 
-      const x = 10 + Math.random() * 80;
-      const baseY = Math.random() * 100;
+      const isVisible = true;
+
+      const x = 39 + ((i / visibleCount) - 0.5) * 80;
+
+      // ===============================
+      // COLLISION-FREE LANE ASSIGNMENT
+      // ===============================
+      let laneIndex = 0;
+
+      for (; laneIndex < lanes.length; laneIndex++) {
+        const lane = lanes[laneIndex];
+
+        const conflict = lane.some(prevX =>
+          Math.abs(prevX - x) < xThreshold
+        );
+
+        if (!conflict) break;
+      }
+
+      if (!lanes[laneIndex]) lanes[laneIndex] = [];
+      lanes[laneIndex].push(x);
+
+      const baseY =
+      laneIndex * laneHeight +
+      (Math.sin(i * 1.7) * 12) +   // smooth variation per card
+      (Math.random() - 0.5) * 5;   // small local scatter
 
       return `
         <div class="parallax-card ${depth}"
@@ -532,7 +570,7 @@ window.addEventListener("scroll", () => {
   const delta = currentY - lastScrollY;
 
   // apply opposite-direction movement
-  scrollOffset += -delta * 0.005;
+  scrollOffset += -delta * 0.01;
 
   lastScrollY = currentY;
 });
@@ -547,7 +585,7 @@ const updateParallax = () => {
   const W = rect.width;
   const H = rect.height;
 
-  const idleGravity = 0.025;
+  const idleGravity = 0.01;
 
   // slow drift when not scrolling
   scrollOffset += idleGravity;
@@ -556,7 +594,12 @@ const updateParallax = () => {
     const x = parseFloat(card.dataset.x);
     const baseY = parseFloat(card.dataset.basey);
 
-    const finalY = baseY + scrollOffset;
+    const depthSpeed =
+      card.classList.contains("parallax-front") ? 0.6 :
+      card.classList.contains("parallax-mid") ? 1.0 :
+      1.6;
+
+    const finalY = baseY + scrollOffset * depthSpeed;
 
     const scale =
       card.classList.contains("parallax-front") ? 1.05 :
