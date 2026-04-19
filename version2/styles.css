@@ -67,9 +67,26 @@ img { display: block; }
 .sa-child[data-anim="scale-in"]  { transform: scale(.94); }
 .sa-child.sa-in { opacity: 1; transform: none; }
 
-/* Hero inline fade-up on page load */
+/* Legacy fade-up (kept for any remaining uses) */
 .fade-up { opacity: 0; transform: translateY(20px); animation: fadeUp .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: var(--d,0ms); }
 @keyframes fadeUp { to { opacity: 1; transform: none; } }
+
+/* ─── Anime.js text-mask reveal ─── */
+/* Hero h1 line mask */
+.h1-line { display: block; overflow: hidden; }
+.h1-li   { display: block; will-change: transform; }
+/* Hero elements — start invisible; Anime.js animates them in */
+#heroTag  { opacity: 0; }
+.hero-h1  { opacity: 1; } /* opacity lives on .h1-li, not h1 */
+.h1-li    { opacity: 0; }
+#heroSub  { opacity: 0; }
+#heroCtas { opacity: 0; }
+#heroImg  { opacity: 0; }
+/* Section h2 word-mask reveal */
+.wm  { display: inline-block; overflow: hidden; vertical-align: top; line-height: inherit; }
+.wi  { display: inline-block; will-change: transform; }
+/* Eyebrow scramble */
+.eyebrow { cursor: default; }
 
 /* ═══════ NAV ═══════ */
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 99; height: var(--nav-h); border-bottom: 1px solid transparent; transition: background .3s, border-color .3s, backdrop-filter .3s; }
