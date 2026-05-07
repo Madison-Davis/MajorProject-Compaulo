@@ -258,7 +258,9 @@ p {
    Hero
    ========================================================================== */
 .hero {
-  padding-top: 19.2rem;
+  padding-top: 12rem;
+  padding-bottom: 10rem;
+  min-height: 100vh;
 }
 
 .hero-grid {
