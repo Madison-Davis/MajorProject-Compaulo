@@ -24,9 +24,33 @@
     <section id="home" class="hero section reveal" style="position:relative;overflow:hidden;display:flex;flex-direction:column;">
       <spline-viewer id="hero-spline" url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;"></spline-viewer>
       <script>
-        document.getElementById("hero-spline").addEventListener("wheel", (e) => {
-          window.scrollBy({ top: e.deltaY, behavior: "auto" });
-        }, { passive: true });
+        window.addEventListener("wheel", function(e) {
+          var spline = document.getElementById("hero-spline");
+          if (!spline) return;
+          var r = spline.getBoundingClientRect();
+          if (e.clientX >= r.left && e.clientX <= r.right &&
+              e.clientY >= r.top  && e.clientY <= r.bottom) {
+            window.scrollBy({ top: e.deltaY, behavior: "auto" });
+          }
+        }, { capture: true, passive: true });
+
+        (function() {
+          var startY = 0;
+          window.addEventListener("touchstart", function(e) {
+            startY = e.touches[0].clientY;
+          }, { capture: true, passive: true });
+          window.addEventListener("touchmove", function(e) {
+            var spline = document.getElementById("hero-spline");
+            if (!spline) return;
+            var r = spline.getBoundingClientRect();
+            var t = e.touches[0];
+            if (t.clientX >= r.left && t.clientX <= r.right &&
+                t.clientY >= r.top  && t.clientY <= r.bottom) {
+              window.scrollBy({ top: startY - t.clientY, behavior: "auto" });
+              startY = t.clientY;
+            }
+          }, { capture: true, passive: true });
+        })();
       </script>
       <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center, transparent 40%, #000 85%), linear-gradient(to bottom, #000 0%, transparent 18%, transparent 72%, #000 100%);"></div>
       
@@ -77,6 +101,7 @@
       </div>
     </section>
 
+    <!--
     <section id="parallax-showcase" class="parallax-section">
       <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
         <source src="assets/videos/v2_video1.mov" type="video/mp4">
@@ -88,11 +113,66 @@
         </p>
       </div>
     </section>
+    -->
+
+    <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
+      <spline-viewer id="iphone-spline" url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;"></spline-viewer>
+      <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 30%, #000 62%);"></div>
+    </section>
+    <script>
+      (function() {
+        var splineUrl = "https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode";
+        var showcase = document.getElementById("iphone-showcase");
+        var isScrollingDown = true;
+        var lastScrollY = window.scrollY;
+        window.addEventListener("scroll", function() {
+          var y = window.scrollY;
+          isScrollingDown = y > lastScrollY;
+          lastScrollY = y;
+        }, { passive: true });
+
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var viewer = document.getElementById("iphone-spline");
+            if (entry.isIntersecting) {
+              if (isScrollingDown) {
+                // restart + fade in
+                var fresh = document.createElement("spline-viewer");
+                fresh.id = "iphone-spline";
+                fresh.setAttribute("url", splineUrl);
+                fresh.style.cssText = "position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;";
+                if (viewer) viewer.replaceWith(fresh);
+                requestAnimationFrame(function() {
+                  requestAnimationFrame(function() {
+                    fresh.style.opacity = "1";
+                  });
+                });
+              } else {
+                // scrolling up — just keep it visible
+                if (viewer) {
+                  viewer.style.transition = "opacity 0.8s ease";
+                  viewer.style.opacity = "1";
+                }
+              }
+            } else {
+              // only hide when scrolling down past it
+              if (isScrollingDown && viewer) {
+                viewer.style.transition = "none";
+                viewer.style.opacity = "0";
+              }
+            }
+          });
+        }, { threshold: 0.1 });
+        observer.observe(showcase);
+      })();
+    </script>
 
     <section id="projects" class="section reveal">
       <div class="container">
+        <!--
         <h2 class="section-title">PROJECTS</h2>
         <p class="section-intro">Full list: internships, projects, and coursework.</p>
+        
         <div class="project-slideshow reveal" aria-label="Project media slideshow">
           <div class="slideshow-viewport">
             <button class="slideshow-arrow slideshow-arrow-prev" type="button" aria-label="Previous slide">‹</button>
@@ -119,7 +199,7 @@
             </figcaption>
             <button class="slideshow-arrow slideshow-arrow-next" type="button" aria-label="Next slide">›</button>
           </div>
-        </div>
+        </div>-->
 
         <div id="project-group-tabs" class="project-group-tabs reveal"></div>
         <div class="project-accordion reveal is-collapsed">
@@ -128,13 +208,15 @@
       </div>
     </section>
 
+
+
     <section id="publications" class="section alt reveal">
       <div class="container">
         <h2 class="section-title">RESEARCH</h2>
         <p class="section-intro">
           selection of papers, notes, and writeups.
         </p>
-        <div id="project-cards" class="card-grid three"></div>
+        <!-- <div id="project-cards" class="card-grid three"></div> -->
 
         <div class="project-accordion reveal">
           <div id="publication-accordion-list"></div>
@@ -268,7 +350,7 @@
                 <table class="accordion-table">
                   <thead>
                     <tr>
-                      <th>Project Title</th>
+                      <th>Title</th>
                       <th>Year</th>
                       <th>Description</th>
                       <th>Link</th>

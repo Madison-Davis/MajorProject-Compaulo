@@ -573,6 +573,10 @@ p {
   transition: max-height 420ms ease, margin-top 300ms ease;
 }
 
+#projects {
+  padding-top: 3rem;
+}
+
 #projects .project-accordion.is-collapsed {
   max-height: 0;
   margin-top: 0;
