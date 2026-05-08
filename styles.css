@@ -1259,20 +1259,21 @@ body.modal-open {
    ========================================================================== */
 .feature-split-layout {
   display: grid;
-  grid-template-columns: 42% 58%;
+  grid-template-columns: 36% 64%;
   gap: 0;
   align-items: stretch;
-  min-height: 540px;
+  min-height: 640px;
 }
 
 .feature-split-left {
   display: flex;
   align-items: center;
   padding-left: 20vw;
-  padding-right: 3rem;
+  padding-right: 0;
   box-sizing: border-box;
   position: relative;
   z-index: 2;
+  overflow: visible;
 }
 
 .angled-stack {
@@ -1280,6 +1281,7 @@ body.modal-open {
   flex-direction: column;
   gap: 0.9rem;
   width: 100%;
+  min-width: 320px;
   transform: perspective(700px) rotateX(22deg) rotateY(20deg);
   transform-style: preserve-3d;
 }
@@ -1354,7 +1356,10 @@ body.modal-open {
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background: linear-gradient(to right, transparent 35%, rgba(0,0,0,0.75) 82%, #000 100%);
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, transparent 15%),
+    linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 15%),
+    linear-gradient(to right, transparent 70%, rgba(0,0,0,0.65) 90%, #000 100%);
 }
 
 .feature-split-right video {
