@@ -117,7 +117,7 @@
 
     <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
       <spline-viewer id="iphone-spline" url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;"></spline-viewer>
-      <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 30%, #000 62%);"></div>
+      <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"></div>
     </section>
     <script>
       (function() {
@@ -142,11 +142,14 @@
                 fresh.setAttribute("url", splineUrl);
                 fresh.style.cssText = "position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;";
                 if (viewer) viewer.replaceWith(fresh);
-                requestAnimationFrame(function() {
-                  requestAnimationFrame(function() {
-                    fresh.style.opacity = "1";
-                  });
-                });
+                var faded = false;
+                var doFadeIn = function() {
+                  if (faded) return;
+                  faded = true;
+                  fresh.style.opacity = "1";
+                };
+                fresh.addEventListener("load", doFadeIn, { once: true });
+                setTimeout(doFadeIn, 400);
               } else {
                 // scrolling up — just keep it visible
                 if (viewer) {
@@ -208,24 +211,8 @@
       </div>
     </section>
 
-
-
-    <section id="publications" class="section alt reveal">
-      <div class="container">
-        <h2 class="section-title">RESEARCH</h2>
-        <p class="section-intro">
-          selection of papers, notes, and writeups.
-        </p>
-        <!-- <div id="project-cards" class="card-grid three"></div> -->
-
-        <div class="project-accordion reveal">
-          <div id="publication-accordion-list"></div>
-        </div>
-      </div>
-    </section>
-
     <section id="links" class="section reveal">
-      <div class="container">
+      <div class="container" style="margin-top:200px">
         <h2 class="section-title">LET'S CONNECT</h2>
         <br>
         <div class="link-list">
@@ -300,10 +287,7 @@
       const groups = data.projectGroups || [];
       if (!projectAccordionEl || groups.length === 0) return;
 
-      const defaultProjectsIndex = groups.findIndex(
-        (group) => String(group.title || "").trim().toUpperCase() === "PROJECTS"
-      );
-      let activeGroupIndex = defaultProjectsIndex >= 0 ? defaultProjectsIndex : 0;
+      let activeGroupIndex = null;
 
       const renderGroupButtons = () => {
         if (!projectGroupTabsEl) return;
@@ -324,10 +308,48 @@
           button.addEventListener("click", () => {
             const nextIndex = Number(button.dataset.groupIndex);
             if (Number.isNaN(nextIndex)) return;
-            activeGroupIndex = nextIndex === activeGroupIndex ? null : nextIndex;
-            renderGroupButtons();
-            renderSingleGroup();
-            bindAccordionInteractions();
+
+            if (nextIndex === activeGroupIndex) {
+              // Animate closed
+              const item = projectAccordionEl.querySelector(".accordion-item");
+              const panel = item ? item.querySelector(".accordion-panel") : null;
+              if (item) item.classList.remove("is-open");
+              if (panel) panel.style.maxHeight = "0px";
+              activeGroupIndex = null;
+              renderGroupButtons();
+              setTimeout(() => {
+                if (projectAccordionWrapEl) projectAccordionWrapEl.classList.add("is-collapsed");
+              }, 420);
+            } else {
+              const prevItem = projectAccordionEl.querySelector(".accordion-item.is-open");
+              const prevPanel = prevItem ? prevItem.querySelector(".accordion-panel") : null;
+
+              activeGroupIndex = nextIndex;
+              renderGroupButtons();
+
+              const openNew = () => {
+                renderSingleGroup();
+                if (projectAccordionWrapEl) projectAccordionWrapEl.classList.remove("is-collapsed");
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    const item = projectAccordionEl.querySelector(".accordion-item");
+                    const panel = item ? item.querySelector(".accordion-panel") : null;
+                    if (item && panel) {
+                      item.classList.add("is-open");
+                      panel.style.maxHeight = `${panel.scrollHeight}px`;
+                    }
+                  });
+                });
+              };
+
+              if (prevItem && prevPanel) {
+                prevItem.classList.remove("is-open");
+                prevPanel.style.maxHeight = "0px";
+                setTimeout(openNew, 420);
+              } else {
+                openNew();
+              }
+            }
           });
         });
       };
@@ -339,10 +361,10 @@
         }
 
         const group = groups[activeGroupIndex];
-        if (projectAccordionWrapEl) projectAccordionWrapEl.classList.remove("is-collapsed");
+        const cols = group.columns || ["Title", "Year", "Description", "Link"];
         projectAccordionEl.innerHTML = `
-          <article class="accordion-item is-open">
-            <button class="accordion-trigger" type="button" aria-expanded="true">
+          <article class="accordion-item">
+            <button class="accordion-trigger" type="button" aria-expanded="false">
               ${group.title}
             </button>
             <div class="accordion-panel">
@@ -350,10 +372,10 @@
                 <table class="accordion-table">
                   <thead>
                     <tr>
-                      <th>Title</th>
-                      <th>Year</th>
-                      <th>Description</th>
-                      <th>Link</th>
+                      <th>${cols[0]}</th>
+                      <th>${cols[1]}</th>
+                      <th>${cols[2]}</th>
+                      <th>${cols[3]}</th>
                     </tr>
                   </thead>
                   <tbody>

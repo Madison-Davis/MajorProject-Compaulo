@@ -585,7 +585,7 @@ p {
 
 .project-group-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   margin: 0.25rem 0 1rem;
 }
@@ -735,6 +735,14 @@ p {
 #publications .project-accordion {
   width: 100%;
   max-width: 100%;
+}
+
+#projects .accordion-trigger {
+  display: none;
+}
+
+#projects .accordion-panel-inner {
+  padding-top: 1rem;
 }
 
 /* ==========================================================================
