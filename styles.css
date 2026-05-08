@@ -573,6 +573,10 @@ p {
   transition: max-height 420ms ease, margin-top 300ms ease;
 }
 
+.project-accordion:not(.is-collapsed) {
+  overflow: visible;
+}
+
 #projects {
   padding-top: 3rem;
 }
@@ -606,9 +610,10 @@ p {
 }
 
 .project-group-btn:hover {
-  border-color: var(--card-border-hover);
-  transform: scale(1.02);
-  box-shadow: var(--card-hover-shadow);
+  border-color: var(--highlight-hover-border);
+  background: linear-gradient(165deg, var(--card-bg-mid), var(--card-bg-end) 52%, var(--color-surface-soft));
+  transform: scale(1.06);
+  box-shadow: var(--shadow-elevated);
 }
 
 .project-group-btn.is-active {
@@ -759,10 +764,18 @@ p {
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
-.accordion-item:hover {
-  transform: none;
+.accordion-item:not(.is-open):hover {
+  transform: scale(1.03);
   border-color: var(--accordion-border-hover);
-  box-shadow: var(--accordion-hover-shadow);
+  background:
+    radial-gradient(circle at 12% -18%, var(--accordion-highlight), var(--accordion-highlight-fade) 45%),
+    linear-gradient(165deg, var(--accordion-bg-mid), var(--accordion-bg-end) 52%, var(--color-surface-soft));
+  box-shadow: var(--shadow-elevated);
+}
+
+.accordion-item.is-open:hover {
+  border-color: var(--accordion-border-hover);
+  box-shadow: var(--shadow-elevated);
 }
 
 .accordion-trigger {
