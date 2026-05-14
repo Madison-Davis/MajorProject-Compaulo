@@ -138,13 +138,13 @@ window.PORTFOLIO_DATA = {
           title: "Computer Architecture",
           topic: "Computer Science",
           description: "ILP, Branch Prediction, Scoreboarding, Tomasulo, Pintool",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS2411-ComputerArchitecture",
         },
         {
           title: "High Performance Computing",
           topic: "Computer Science",
           description: "Vectorization, OpenMP SMP, MPI DMP, CUDA Programming, Kokkos, Supercomputing",
-          link: "#",
+          link: "https://github.com/Madison-Davis/Courses-CS2050-HPC",
         },
         {
           title: "Computing at Scale",
@@ -219,7 +219,7 @@ window.PORTFOLIO_DATA = {
           link: "#",
         },
         {
-          title: "Market Power4",
+          title: "Market Power",
           topic: "Economics",
           description: "Elasticity, Market Structures, Bertrand/Cournot/Stackelberg, Game Theory, Collusion, Network Platforms",
           link: "#",
