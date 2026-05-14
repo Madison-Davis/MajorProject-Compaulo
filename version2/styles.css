@@ -138,7 +138,7 @@ img { display: block; }
 .tag { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--t3); border: 1px solid var(--bd1); padding: 7px 16px; border-radius: 100px; margin-bottom: 28px; }
 .tag-dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; opacity: .8; animation: blink 2s infinite; }
 @keyframes blink { 0%,100%{opacity:.8} 50%{opacity:.2} }
-.hero-h1 { font-size: clamp(44px, 7vw, 84px); font-weight: 900; letter-spacing: -.045em; line-height: 1.04; margin-bottom: 22px; max-width: 800px; }
+.hero-h1 { font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; letter-spacing: -.045em; line-height: 1.04; margin-bottom: 22px; max-width: 800px; }
 .hero-h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: rgba(255,255,255,.7); }
 .hero-sub { font-size: 17px; color: var(--t2); line-height: 1.7; margin-bottom: 36px; max-width: 420px; }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 56px; }

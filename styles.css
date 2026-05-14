@@ -250,6 +250,32 @@ p {
   transition: color var(--transition);
 }
 
+.nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 4px 5px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.nav-pill-link {
+  padding: 0.38rem 1rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+  transition: color 200ms ease, background 200ms ease;
+}
+.nav-pill-link:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.07);
+}
+
 .nav-list a:hover {
   color: var(--color-text);
 }
@@ -1712,5 +1738,243 @@ body.modal-open {
 .parallax-back {
   z-index: 2;
   filter: brightness(0.33);
+}
+
+/* ==============================================
+   LEARNABIT
+   ============================================== */
+
+/* ---- Landing: category cards ---- */
+.lab-card {
+  min-height: 340px;
+  display: grid;
+  align-content: start;
+  gap: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+.lab-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  border-color: var(--overview-hover-border);
+  box-shadow: var(--overview-hover-shadow);
+}
+.lab-card:hover::before {
+  opacity: 1;
+  transform: translateX(15%);
+}
+.lab-count {
+  margin: 0;
+  text-align: left;
+  color: var(--color-text-dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.lab-explore {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: left;
+  margin-top: auto;
+}
+
+/* ---- Keyword chip pills ---- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.chip {
+  font-size: 0.68rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+}
+
+/* ---- Breadcrumb in header ---- */
+.lab-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+.lab-breadcrumb a {
+  color: var(--color-text-dim);
+  transition: color var(--transition);
+}
+.lab-breadcrumb a:hover {
+  color: var(--color-text);
+}
+.lab-breadcrumb .sep {
+  opacity: 0.35;
+}
+.lab-breadcrumb .current {
+  color: var(--color-text);
+}
+
+/* ---- Sub-page course cards ---- */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.course-card {
+  border: 1px solid var(--card-border);
+  background: linear-gradient(165deg, var(--card-bg-start), var(--card-bg-mid) 52%, var(--card-bg-end));
+  border-radius: var(--radius-md);
+  padding: 1.3rem 1.1rem;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.course-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-elevated);
+}
+.course-card h3 {
+  margin: 0;
+  text-align: left;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+}
+.course-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.22rem 0.6rem;
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 0.25rem;
+  transition: border-color var(--transition), color var(--transition);
+}
+.course-link:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+/* ---- Accordion ---- */
+.lab-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lab-accord-item {
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.lab-accord-item.is-open {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-hover-shadow);
+}
+.lab-accord-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 2.5rem;
+  align-items: center;
+  padding: 0.95rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+  background: linear-gradient(165deg, var(--card-bg-start), var(--card-bg-mid) 52%, var(--card-bg-end));
+  transition: border-color var(--transition), background var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+.lab-accord-header:hover {
+  border-color: var(--highlight-hover-border);
+  background: linear-gradient(165deg, var(--card-bg-mid), var(--card-bg-end) 52%, var(--color-surface-soft));
+  box-shadow: var(--shadow-elevated);
+}
+.lab-accord-item.is-open .lab-accord-header {
+  border-bottom: 1px solid var(--color-border);
+}
+.lab-accord-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-text-dim);
+  text-align: left;
+}
+.lab-accord-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.lab-accord-chevron {
+  font-size: 1.1rem;
+  color: var(--color-text-dim);
+  display: inline-block;
+  transition: transform 280ms ease;
+  text-align: right;
+}
+.lab-accord-item.is-open .lab-accord-chevron {
+  transform: rotate(90deg);
+}
+.lab-accord-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms ease;
+}
+.lab-accord-item.is-open .lab-accord-body {
+  grid-template-rows: 1fr;
+}
+.lab-accord-inner {
+  overflow: hidden;
+  padding: 0 1.5rem;
+}
+.lab-accord-grid {
+  padding: 1.25rem 0 1.75rem;
+}
+
+/* ---- Sub-page hero ---- */
+.lab-page-hero {
+  padding-top: 6rem;
+  padding-bottom: 2.5rem;
+}
+
+@media (max-width: 980px) {
+  .course-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .lab-accord-header {
+    padding: 0.9rem 1.1rem;
+    grid-template-columns: 2rem 1fr 2rem;
+  }
+  .lab-accord-inner {
+    padding: 0 1.1rem;
+  }
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+  .lab-breadcrumb {
+    font-size: 0.72rem;
+  }
 }
 
