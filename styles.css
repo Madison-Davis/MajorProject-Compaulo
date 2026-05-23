@@ -972,7 +972,33 @@ body.modal-open {
   display: grid;
   align-content: start;
   gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.course-card.coming-soon {
+  cursor: default;
+}
+
+.course-card.coming-soon::after {
+  content: "COMING SOON";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.course-card.coming-soon:hover::after {
+  opacity: 1;
 }
 
 .course-card:hover {
@@ -1110,6 +1136,179 @@ body.modal-open {
 @media (max-width: 980px) {
   .course-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   TEMPLATE PAGE (chapter viewer)
+   ========================================================================== */
+.tpl-layout {
+  display: flex;
+  min-height: calc(100vh - 72px);
+  animation: tpl-fadein 400ms ease both;
+}
+
+@keyframes tpl-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tpl-toc {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  border-right: 1px solid var(--color-border);
+  padding: 2.5rem 1.25rem 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tpl-back-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color var(--transition);
+}
+
+.tpl-back-btn:hover {
+  color: var(--color-text);
+}
+
+.tpl-toc-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--color-text-dim);
+  opacity: 0.5;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.toc-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color var(--transition), background var(--transition);
+}
+
+.toc-link:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toc-link.is-active {
+  color: var(--color-accent-strong);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.toc-num {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.tpl-content {
+  flex: 1;
+  padding: 4rem 10%;
+}
+
+.tpl-content-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.tpl-content-title {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  text-align: center;
+  margin: 0.2rem 0 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.tpl-chapter {
+  display: none;
+  transition: opacity 260ms ease;
+}
+
+.tpl-chapter.is-active {
+  display: block;
+}
+
+.tpl-chapter-header {
+  margin-bottom: 2.2rem;
+}
+
+.tpl-chapter-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  text-align: left;
+  margin: 0.3rem 0 0;
+}
+
+.tpl-chapter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tpl-chapter-body p {
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  text-align: left;
+  font-size: 1rem;
+}
+
+@media (max-width: 700px) {
+  .tpl-layout {
+    flex-direction: column;
+  }
+
+  .tpl-toc {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem;
+    gap: 0.35rem;
+  }
+
+  .tpl-toc-label {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  .tpl-content {
+    padding: 2rem 1.25rem;
   }
 }
 

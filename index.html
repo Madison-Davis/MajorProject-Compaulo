@@ -213,6 +213,7 @@
       </div>
     </section>
 
+    <span id="links" style="display:block;height:0;"></span>
     <section id="feature-split" class="section reveal">
       <h1 class="section-title">LET'S CONNECT</h2>
       <div class="feature-split-layout">
@@ -759,6 +760,23 @@ const updateParallax = () => {
 };
 
 requestAnimationFrame(updateParallax);
+  </script>
+
+  <script>
+    (function () {
+      document.querySelectorAll(".btn.primary, .btn.ghost").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var href = btn.getAttribute("href");
+          if (!href || href.charAt(0) !== "#") return;
+          var target = document.querySelector(href);
+          if (!target) return;
+          e.preventDefault();
+          var header = document.querySelector(".site-header");
+          var offset = header ? header.getBoundingClientRect().height : 0;
+          window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - offset);
+        });
+      });
+    })();
   </script>
 </body>
 </html>
