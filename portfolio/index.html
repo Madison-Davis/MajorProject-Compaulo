@@ -24,6 +24,7 @@
   </header>
 
   <main id="top">
+    <!-- HERO -->
     <section id="home" class="hero section reveal" style="position:relative;overflow:hidden;display:flex;flex-direction:column;">
       <spline-viewer id="hero-spline" url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;"></spline-viewer>
       <script>
@@ -77,6 +78,7 @@
       <div style="position:absolute;bottom:0;right:0;width:160px;height:70px;background:black;z-index:12;pointer-events:none;"></div>
     </section>
 
+    <!-- ABOUT ME -->
     <section id="overview" class="section reveal">
       <div class="container">
         <h2 class="section-title">FROM IDEATION, TO INNOVATION</h2>
@@ -104,6 +106,8 @@
       </div>
     </section>
 
+
+    <!-- IPHONE SHOWCASE -->
     <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
       <spline-viewer id="iphone-spline" url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;"></spline-viewer>
       <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"></div>
@@ -159,6 +163,8 @@
       })();
     </script>
 
+
+    <!-- ACCORDIONS -->
     <section id="projects" class="section reveal">
       <div class="container">
         <div id="project-group-tabs" class="project-group-tabs reveal"></div>
@@ -168,6 +174,8 @@
       </div>
     </section>
 
+
+    <!-- LINKS -->
     <span id="links" style="display:block;height:0;"></span>
     <section id="feature-split" class="section reveal">
       <h1 class="section-title">LET'S CONNECT</h2>
@@ -198,16 +206,6 @@
     </section>
   </main>
 
-  <div id="pdf-modal" class="pdf-modal" aria-hidden="true">
-    <div class="pdf-modal-backdrop" data-close="true"></div>
-    <section class="pdf-modal-content" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
-      <header class="pdf-modal-header">
-        <h3 id="pdf-modal-title">Publication PDF</h3>
-        <button id="pdf-modal-close" class="pdf-close" type="button" aria-label="Close PDF viewer">Close</button>
-      </header>
-      <iframe id="pdf-frame" class="pdf-frame" title="Publication PDF"></iframe>
-    </section>
-  </div>
 
   </footer>
   <script src="data.js"></script>
@@ -378,50 +376,8 @@
       renderGroupButtons();
       renderSingleGroup();
     };
-
-    const renderPublications = () => {
-      if (!publicationAccordionEl) return;
-      publicationAccordionEl.innerHTML = `
-        <article class="accordion-item is-open">
-          <button class="accordion-trigger" type="button" aria-expanded="true">
-            All RESEARCH
-          </button>
-          <div class="accordion-panel">
-            <div class="accordion-panel-inner">
-              <table class="accordion-table">
-                <thead>
-                  <tr>
-                    <th>Genre</th>
-                    <th>Title</th>
-                    <th>Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${data.publications
-                    .map(
-                      (publication) => `
-                        <tr>
-                          <td>${publication.topic || "Publication"}</td>
-                          <td>${publication.title}</td>
-                          <td>
-                            ${publication.pdf || publication.link
-                              ? `<a href="${publication.pdf || publication.link}" target="_blank">Link</a>`
-                              : "-"}
-                          </td>
-                        </tr>
-                      `
-                    )
-                    .join("")}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </article>
-      `;
-    };
-
+    
     renderFeaturedPublications();
-    renderPublications();
 
     const openPdfModal = (pdfPath, title) => {
       if (!pdfModal || !pdfFrame) return;
