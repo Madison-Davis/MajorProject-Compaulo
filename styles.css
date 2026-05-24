@@ -1332,6 +1332,329 @@ body.modal-open {
 }
 
 /* ==========================================================================
+   CORTEX PAGE
+   ========================================================================== */
+
+.container-wide {
+  width: 75%;
+  margin: 0 auto;
+}
+
+/* Stats row above the map */
+.cortex-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3.5rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.cortex-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.cortex-stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-accent-strong);
+  line-height: 1;
+}
+
+.cortex-stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+/* Fake earth map */
+.earth-map-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 7;
+}
+
+.earth-map {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background:
+    radial-gradient(ellipse 18% 15% at 16% 40%, rgba(255, 255, 255, 0.055) 0%, transparent 100%),
+    radial-gradient(ellipse 12% 20% at 29% 64%, rgba(255, 255, 255, 0.045) 0%, transparent 100%),
+    radial-gradient(ellipse 10% 10% at 50% 32%, rgba(255, 255, 255, 0.045) 0%, transparent 100%),
+    radial-gradient(ellipse 12% 24% at 53% 57%, rgba(255, 255, 255, 0.05) 0%, transparent 100%),
+    radial-gradient(ellipse 28% 22% at 74% 40%, rgba(255, 255, 255, 0.045) 0%, transparent 100%),
+    radial-gradient(ellipse 10% 12% at 87% 66%, rgba(255, 255, 255, 0.035) 0%, transparent 100%),
+    #080808;
+}
+
+.earth-map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 12.5%, 8.33% 100%;
+  pointer-events: none;
+}
+
+.earth-map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, #080808 0%, transparent 8%, transparent 92%, #080808 100%),
+    linear-gradient(to bottom, rgba(8, 8, 8, 0.65) 0%, transparent 15%, transparent 85%, rgba(8, 8, 8, 0.65) 100%);
+  pointer-events: none;
+}
+
+.map-marker {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a6a6a6;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12), 0 0 8px rgba(255, 255, 255, 0.25);
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.map-marker:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2), 0 0 14px rgba(255, 255, 255, 0.4);
+}
+
+.map-marker.featured {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18), 0 0 14px rgba(255, 255, 255, 0.45);
+}
+
+.map-marker.featured:hover {
+  transform: translate(-50%, -50%) scale(1.4);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  background: rgba(2, 13, 26, 0.85);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+}
+
+.map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.map-legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a6a6a6;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.map-legend-dot.featured {
+  width: 9px;
+  height: 9px;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+}
+
+/* Org cards */
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.org-card {
+  border: 1px solid var(--card-border);
+  background: linear-gradient(165deg, var(--card-bg-start), var(--card-bg-mid) 52%, var(--card-bg-end));
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.25rem;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.org-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-elevated);
+}
+
+.org-card-region {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+.org-card h3 {
+  margin: 0;
+  text-align: left;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+}
+
+.org-card p {
+  text-align: left;
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+/* Product cards */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.product-card {
+  border: 1px solid var(--card-border);
+  background: linear-gradient(165deg, var(--card-bg-start), var(--card-bg-mid) 52%, var(--card-bg-end));
+  border-radius: var(--radius-lg);
+  padding: 1.3rem 1.1rem;
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-elevated);
+}
+
+.product-category {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+.product-card h3 {
+  margin: 0;
+  text-align: left;
+  font-size: 0.86rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+}
+
+.product-card p {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.product-price {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+.product-buy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.22rem 0.65rem;
+  text-decoration: none;
+  width: fit-content;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.product-buy-link:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+@media (max-width: 980px) {
+  .container-wide {
+    width: 90%;
+  }
+
+  .org-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cortex-stats {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .container-wide {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .org-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cortex-stats {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .cortex-stat-num {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==========================================================================
    WHITEBOARD
    ========================================================================== */
 .whiteboard-btn {
