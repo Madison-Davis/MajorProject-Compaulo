@@ -1330,3 +1330,21 @@ body.modal-open {
     font-size: 0.72rem;
   }
 }
+
+/* ==========================================================================
+   WHITEBOARD
+   ========================================================================== */
+.whiteboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+  padding: 8px 16px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.whiteboard-btn:hover { background: #000000; }
