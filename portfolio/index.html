@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compaulo</title>
+  <meta name="description" content="HELLO! I'M MADISON DAVIS - Creator, developer, and systems thinker.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top">COMPAULO</a>
+      <nav class="nav-pill" aria-label="Site navigation">
+        <a class="nav-pill-link" href="#top">PORTFOLIO</a>
+        <a class="nav-pill-link" href="../codex/index.html">CODEX</a>
+        <a class="nav-pill-link" href="../cortex/index.html">CORTEX</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section id="home" class="hero section reveal" style="position:relative;overflow:hidden;display:flex;flex-direction:column;">
+      <spline-viewer id="hero-spline" url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;"></spline-viewer>
+      <script>
+        window.addEventListener("wheel", function(e) {
+          var spline = document.getElementById("hero-spline");
+          if (!spline) return;
+          var r = spline.getBoundingClientRect();
+          if (e.clientX >= r.left && e.clientX <= r.right &&
+              e.clientY >= r.top  && e.clientY <= r.bottom) {
+            window.scrollBy({ top: e.deltaY, behavior: "auto" });
+          }
+        }, { capture: true, passive: true });
+
+        (function() {
+          var startY = 0;
+          window.addEventListener("touchstart", function(e) {
+            startY = e.touches[0].clientY;
+          }, { capture: true, passive: true });
+          window.addEventListener("touchmove", function(e) {
+            var spline = document.getElementById("hero-spline");
+            if (!spline) return;
+            var r = spline.getBoundingClientRect();
+            var t = e.touches[0];
+            if (t.clientX >= r.left && t.clientX <= r.right &&
+                t.clientY >= r.top  && t.clientY <= r.bottom) {
+              window.scrollBy({ top: startY - t.clientY, behavior: "auto" });
+              startY = t.clientY;
+            }
+          }, { capture: true, passive: true });
+        })();
+      </script>
+      <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center, transparent 40%, #000 85%), linear-gradient(to bottom, #000 0%, transparent 18%, transparent 72%, #000 100%);"></div>
+      
+      <div class="container hero-grid" style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:stretch;align-items:center;pointer-events:none;">
+        <div class="reveal hero-copy" style="display:flex;flex-direction:column;justify-content:space-between;flex:1;width:100%;pointer-events:none;">
+          <div class="hero-top" style="text-align:center;pointer-events:auto;">
+            <p class="kicker">HELLO!</p>
+            <h1>I'M MADISON DAVIS</h1>
+            <p class="lead">
+              Curiosity has always led me to pursue projects where strategy, innovation,
+              and technical skill intersect.
+            </p>
+          </div>
+          <div class="hero-actions" style="pointer-events:auto;">
+            <a class="btn primary" href="#projects">View My Work</a>
+            <a class="btn ghost" href="#links">Connect With Me</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:absolute;bottom:0;right:0;width:160px;height:70px;background:black;z-index:12;pointer-events:none;"></div>
+    </section>
+
+    <section id="overview" class="section reveal">
+      <div class="container">
+        <h2 class="section-title">FROM IDEATION, TO INNOVATION</h2>
+        <p class="section-intro">
+          I lead projects from concept to launch, blending design systems, software
+          engineering, and business goals into clear deliverables.
+        </p>
+        <div class="card-grid three">
+          <article class="card overview-card reveal">
+            <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>01</p>
+            <h3>BUSINESS <br> ECONOMICS</h3>
+            <p>finance, econometrics, product management, operations, strategy</p>
+          </article>
+          <article class="card overview-card reveal">
+            <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>02</p>
+            <h3>ARTIFICIAL <br> INTELLIGENCE</h3>
+            <p>machine learning, reinforcement learning, deep learning, natural language, fuzzy logic</p>
+          </article>
+          <article class="card overview-card reveal">
+            <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>03</p>
+            <h3>COMPUTER <br> ENGINEERING</h3>
+            <p>hardware, architecture, chip design, distributed systems, security</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
+      <spline-viewer id="iphone-spline" url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;"></spline-viewer>
+      <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"></div>
+    </section>
+    <script>
+      (function() {
+        var splineUrl = "https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode";
+        var showcase = document.getElementById("iphone-showcase");
+        var isScrollingDown = true;
+        var lastScrollY = window.scrollY;
+        window.addEventListener("scroll", function() {
+          var y = window.scrollY;
+          isScrollingDown = y > lastScrollY;
+          lastScrollY = y;
+        }, { passive: true });
+
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var viewer = document.getElementById("iphone-spline");
+            if (entry.isIntersecting) {
+              if (isScrollingDown) {
+                // restart + fade in
+                var fresh = document.createElement("spline-viewer");
+                fresh.id = "iphone-spline";
+                fresh.setAttribute("url", splineUrl);
+                fresh.style.cssText = "position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;";
+                if (viewer) viewer.replaceWith(fresh);
+                var faded = false;
+                var doFadeIn = function() {
+                  if (faded) return;
+                  faded = true;
+                  fresh.style.opacity = "1";
+                };
+                fresh.addEventListener("load", doFadeIn, { once: true });
+                setTimeout(doFadeIn, 200);
+              } else {
+                // scrolling up — just keep it visible
+                if (viewer) {
+                  viewer.style.transition = "opacity 0.8s ease";
+                  viewer.style.opacity = "1";
+                }
+              }
+            } else {
+              // only hide when scrolling down past it
+              if (isScrollingDown && viewer) {
+                viewer.style.transition = "none";
+                viewer.style.opacity = "0";
+              }
+            }
+          });
+        }, { threshold: 0.1 });
+        observer.observe(showcase);
+      })();
+    </script>
+
+    <section id="projects" class="section reveal">
+      <div class="container">
+        <div id="project-group-tabs" class="project-group-tabs reveal"></div>
+        <div class="project-accordion reveal is-collapsed">
+          <div id="project-accordion-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <span id="links" style="display:block;height:0;"></span>
+    <section id="feature-split" class="section reveal">
+      <h1 class="section-title">LET'S CONNECT</h2>
+      <div class="feature-split-layout">
+        <div class="feature-split-left">
+          <div class="angled-stack">
+            <a href="https://github.com/Madison-Davis" class="angled-btn">
+              <span class="angled-btn-label">GITHUB</span>
+              <span class="angled-btn-arrow">↗</span>
+            </a>
+            <a href="https://www.linkedin.com/in/madison-davis-80a92b1ab/" class="angled-btn">
+              <span class="angled-btn-label">LINKEDIN</span>
+              <span class="angled-btn-arrow">↗</span>
+            </a>
+            <a href="https://docs.google.com/document/d/1a-2xSwqwjoeRRwTsnIrE0nwkoSXkvXZLcDsxcvbzD5o/edit?tab=t.0" class="angled-btn">
+              <span class="angled-btn-label">RESUME</span>
+              <span class="angled-btn-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="feature-split-right">
+          <video autoplay loop muted playsinline>
+            <source src="assets/videos/v2_video1.mov" type="video/quicktime">
+            <source src="assets/videos/v2_video1.mov" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="pdf-modal" class="pdf-modal" aria-hidden="true">
+    <div class="pdf-modal-backdrop" data-close="true"></div>
+    <section class="pdf-modal-content" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+      <header class="pdf-modal-header">
+        <h3 id="pdf-modal-title">Publication PDF</h3>
+        <button id="pdf-modal-close" class="pdf-close" type="button" aria-label="Close PDF viewer">Close</button>
+      </header>
+      <iframe id="pdf-frame" class="pdf-frame" title="Publication PDF"></iframe>
+    </section>
+  </div>
+
+  </footer>
+  <script src="../data.js"></script>
+  <script>
+    const data = window.PORTFOLIO_DATA || {
+      featuredPublications: [],
+      featuredVideos: [],
+      projectGroups: [],
+      publications: [],
+    };
+
+    const projectCardsEl = document.querySelector("#project-cards");
+    const projectGroupTabsEl = document.querySelector("#project-group-tabs");
+    const projectAccordionEl = document.querySelector("#project-accordion-list");
+    const projectAccordionWrapEl = projectAccordionEl ? projectAccordionEl.closest(".project-accordion") : null;
+    const publicationAccordionEl = document.querySelector("#publication-accordion-list");
+    const slideshowTrack = document.querySelector(".slideshow-track");
+    const slideshowPrev = document.querySelector(".slideshow-arrow-prev");
+    const slideshowNext = document.querySelector(".slideshow-arrow-next");
+    const slideshowCaptionTitle = document.querySelector(".slideshow-caption h3");
+    const slideshowCaptionDescription = document.querySelector(".slideshow-caption p");
+    const pdfModal = document.querySelector("#pdf-modal");
+    const pdfFrame = document.querySelector("#pdf-frame");
+    const pdfClose = document.querySelector("#pdf-modal-close");
+    const pdfModalTitle = document.querySelector("#pdf-modal-title");
+
+    const renderFeaturedPublications = () => {
+      if (projectCardsEl) {
+        projectCardsEl.innerHTML = data.featuredPublications
+          .map(
+            (project) => `
+              <article class="project-card highlighted-card reveal">
+                <div class="highlight-inner">
+                  <div class="highlight-image-card">
+                    <img src="${project.image || "assets/images/highlight1.jpeg"}" alt="${project.title}" loading="lazy">
+                  </div>
+                  <div class="highlight-text-card">
+                    <div class="highlight-title-row">
+                      <h3>${project.title}</h3>
+                      <a class="highlight-link" href="${project.link || "#"}" target="_blank" aria-label="View ${project.title}">↗</a>
+                    </div>
+                    <p>${project.description}</p>
+                  </div>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      const groups = data.projectGroups || [];
+      if (!projectAccordionEl || groups.length === 0) return;
+
+      let activeGroupIndex = null;
+
+      const renderGroupButtons = () => {
+        if (!projectGroupTabsEl) return;
+        projectGroupTabsEl.innerHTML = groups
+          .map(
+            (group, idx) => `
+              <button
+                class="project-group-btn ${idx === activeGroupIndex ? "is-active" : ""}"
+                type="button"
+                data-group-index="${idx}">
+                ${group.title}
+              </button>
+            `
+          )
+          .join("");
+
+        projectGroupTabsEl.querySelectorAll(".project-group-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            const nextIndex = Number(button.dataset.groupIndex);
+            if (Number.isNaN(nextIndex)) return;
+
+            if (nextIndex === activeGroupIndex) {
+              // Animate closed
+              const item = projectAccordionEl.querySelector(".accordion-item");
+              const panel = item ? item.querySelector(".accordion-panel") : null;
+              if (item) item.classList.remove("is-open");
+              if (panel) panel.style.maxHeight = "0px";
+              activeGroupIndex = null;
+              renderGroupButtons();
+              setTimeout(() => {
+                if (projectAccordionWrapEl) projectAccordionWrapEl.classList.add("is-collapsed");
+              }, 420);
+            } else {
+              const prevItem = projectAccordionEl.querySelector(".accordion-item.is-open");
+              const prevPanel = prevItem ? prevItem.querySelector(".accordion-panel") : null;
+
+              activeGroupIndex = nextIndex;
+              renderGroupButtons();
+
+              const openNew = () => {
+                renderSingleGroup();
+                if (projectAccordionWrapEl) projectAccordionWrapEl.classList.remove("is-collapsed");
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    const item = projectAccordionEl.querySelector(".accordion-item");
+                    const panel = item ? item.querySelector(".accordion-panel") : null;
+                    if (item && panel) {
+                      item.classList.add("is-open");
+                      panel.style.maxHeight = `${panel.scrollHeight}px`;
+                    }
+                  });
+                });
+              };
+
+              if (prevItem && prevPanel) {
+                prevItem.classList.remove("is-open");
+                prevPanel.style.maxHeight = "0px";
+                setTimeout(openNew, 420);
+              } else {
+                openNew();
+              }
+            }
+          });
+        });
+      };
+
+      const renderSingleGroup = () => {
+        if (activeGroupIndex === null) {
+          if (projectAccordionWrapEl) projectAccordionWrapEl.classList.add("is-collapsed");
+          return;
+        }
+
+        const group = groups[activeGroupIndex];
+        const cols = group.columns || ["Title", "Topic", "Description", "Link"];
+        projectAccordionEl.innerHTML = `
+          <article class="accordion-item">
+            <button class="accordion-trigger" type="button" aria-expanded="false">
+              ${group.title}
+            </button>
+            <div class="accordion-panel">
+              <div class="accordion-panel-inner">
+                <table class="accordion-table">
+                  <thead>
+                    <tr>
+                      <th>${cols[0]}</th>
+                      <th>${cols[1]}</th>
+                      <th>${cols[2]}</th>
+                      <th>${cols[3]}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${group.rows
+                      .map(
+                        (row) => `
+                          <tr>
+                            <td>${row.title}</td>
+                            <td>${row.topic || row.year}</td>
+                            <td>${row.description}</td>
+                            <td>
+                            ${row.link === "#" ? "-" : `<a href="${row.link}" target="_blank">Link</a>`}
+                            </td>
+                          </tr>
+                        `
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+        `;
+      };
+
+      renderGroupButtons();
+      renderSingleGroup();
+    };
+
+    const renderPublications = () => {
+      if (!publicationAccordionEl) return;
+      publicationAccordionEl.innerHTML = `
+        <article class="accordion-item is-open">
+          <button class="accordion-trigger" type="button" aria-expanded="true">
+            All RESEARCH
+          </button>
+          <div class="accordion-panel">
+            <div class="accordion-panel-inner">
+              <table class="accordion-table">
+                <thead>
+                  <tr>
+                    <th>Genre</th>
+                    <th>Title</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.publications
+                    .map(
+                      (publication) => `
+                        <tr>
+                          <td>${publication.topic || "Publication"}</td>
+                          <td>${publication.title}</td>
+                          <td>
+                            ${publication.pdf || publication.link
+                              ? `<a href="${publication.pdf || publication.link}" target="_blank">Link</a>`
+                              : "-"}
+                          </td>
+                        </tr>
+                      `
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+      `;
+    };
+
+    renderFeaturedPublications();
+    renderPublications();
+
+    const openPdfModal = (pdfPath, title) => {
+      if (!pdfModal || !pdfFrame) return;
+      pdfFrame.src = pdfPath;
+      if (pdfModalTitle) pdfModalTitle.textContent = title || "Publication PDF";
+      pdfModal.classList.add("is-open");
+      pdfModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    };
+
+    const closePdfModal = () => {
+      if (!pdfModal || !pdfFrame) return;
+      pdfModal.classList.remove("is-open");
+      pdfModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      pdfFrame.src = "";
+    };
+
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const link = event.target.closest(".publication-open");
+      if (!link) return;
+      event.preventDefault();
+      const pdfPath = link.dataset.pdf;
+      if (!pdfPath || pdfPath === "#") return;
+      openPdfModal(pdfPath, link.dataset.title);
+    });
+
+    if (pdfClose) {
+      pdfClose.addEventListener("click", closePdfModal);
+    }
+
+    if (pdfModal) {
+      pdfModal.addEventListener("click", (event) => {
+        if (event.target instanceof HTMLElement && event.target.dataset.close === "true") {
+          closePdfModal();
+        }
+      });
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && pdfModal && pdfModal.classList.contains("is-open")) {
+        closePdfModal();
+      }
+    });
+
+    const revealElements = document.querySelectorAll(".reveal");
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          } else {
+            entry.target.classList.remove("is-visible");
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    revealElements.forEach((el) => revealObserver.observe(el));
+
+    if (slideshowTrack && slideshowPrev && slideshowNext) {
+      const originalSlides = Array.from(slideshowTrack.querySelectorAll(".slideshow-slide"));
+      if (originalSlides.length > 1) {
+        const featuredVideos = Array.isArray(data.featuredVideos) ? data.featuredVideos : [];
+
+        const updateCaption = (trackIndex) => {
+          if (!slideshowCaptionTitle || !slideshowCaptionDescription) return;
+          const realIndex = ((trackIndex - 1) % originalSlides.length + originalSlides.length) % originalSlides.length;
+          const item = featuredVideos[realIndex];
+          slideshowCaptionTitle.textContent = item?.title || "Highlighted Project";
+          slideshowCaptionDescription.textContent = item?.description || "";
+        };
+
+        const firstClone = originalSlides[0].cloneNode(true);
+        const lastClone = originalSlides[originalSlides.length - 1].cloneNode(true);
+        firstClone.dataset.clone = "first";
+        lastClone.dataset.clone = "last";
+        slideshowTrack.appendChild(firstClone);
+        slideshowTrack.prepend(lastClone);
+
+        let currentIndex = 1;
+        let isAnimating = false;
+
+        const jumpTo = (index, animated = true) => {
+          slideshowTrack.style.transition = animated ? "transform 420ms ease" : "none";
+          slideshowTrack.style.transform = `translateX(-${index * 100}%)`;
+          updateCaption(index);
+        };
+
+        jumpTo(currentIndex, false);
+        requestAnimationFrame(() => {
+          slideshowTrack.style.transition = "transform 420ms ease";
+        });
+
+        const move = (direction) => {
+          if (isAnimating) return;
+          isAnimating = true;
+          currentIndex += direction;
+          jumpTo(currentIndex, true);
+        };
+
+        slideshowPrev.addEventListener("click", () => move(-1));
+        slideshowNext.addEventListener("click", () => move(1));
+
+        slideshowTrack.addEventListener("transitionend", () => {
+          const totalWithClones = originalSlides.length + 2;
+          if (currentIndex === 0) {
+            currentIndex = originalSlides.length;
+            jumpTo(currentIndex, false);
+          } else if (currentIndex === totalWithClones - 1) {
+            currentIndex = 1;
+            jumpTo(currentIndex, false);
+          }
+          isAnimating = false;
+        });
+      }
+    }
+
+    const bindAccordionInteractions = () => {
+      const accordionItems = document.querySelectorAll(".accordion-item");
+      accordionItems.forEach((item) => {
+        if (item.dataset.bound === "true") return;
+        const trigger = item.querySelector(".accordion-trigger");
+        const panel = item.querySelector(".accordion-panel");
+        if (!trigger || !panel) return;
+
+        if (item.classList.contains("is-open")) {
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+        }
+
+        trigger.addEventListener("click", () => {
+          const willOpen = !item.classList.contains("is-open");
+          item.classList.toggle("is-open", willOpen);
+          trigger.setAttribute("aria-expanded", String(willOpen));
+          panel.style.maxHeight = willOpen ? `${panel.scrollHeight}px` : "0px";
+        });
+
+        item.dataset.bound = "true";
+      });
+    };
+
+    bindAccordionInteractions();
+
+    window.addEventListener("resize", () => {
+      document.querySelectorAll(".accordion-item.is-open .accordion-panel").forEach((panel) => {
+        panel.style.maxHeight = `${panel.scrollHeight}px`;
+      });
+    });
+
+const parallaxStage = document.querySelector("#parallax-stage");
+let parallaxCards = [];
+const buildParallaxVideos = () => {
+  if (!parallaxStage) return;
+
+  const videos = data.allVideos || [];
+  const n = videos.length;
+
+  // ===============================
+  // FIXED VISIBLE SET SIZE
+  // ===============================
+  const visibleCount = 10;
+
+  const laneHeight = 30;
+  const xThreshold = 30;
+
+  const lanes = [];
+
+  parallaxStage.innerHTML = Array.from({ length: visibleCount })
+    .map((_, i) => {
+      // ===============================
+      // REPEAT VIDEOS (CYCLING)
+      // ===============================
+      const src = videos[i % n];
+
+      const depth =
+        i % 3 === 0 ? "parallax-front" :
+        i % 3 === 1 ? "parallax-mid" :
+                      "parallax-back";
+
+      const isVisible = true;
+
+      const x = 39 + ((i / visibleCount) - 0.5) * 80;
+
+      // ===============================
+      // COLLISION-FREE LANE ASSIGNMENT
+      // ===============================
+      let laneIndex = 0;
+
+      for (; laneIndex < lanes.length; laneIndex++) {
+        const lane = lanes[laneIndex];
+
+        const conflict = lane.some(prevX =>
+          Math.abs(prevX - x) < xThreshold
+        );
+
+        if (!conflict) break;
+      }
+
+      if (!lanes[laneIndex]) lanes[laneIndex] = [];
+      lanes[laneIndex].push(x);
+
+      const baseY =
+      laneIndex * laneHeight +
+      (Math.sin(i * 1.7) * 12) +   // smooth variation per card
+      (Math.random() - 0.5) * 5;   // small local scatter
+
+      return `
+        <div class="parallax-card ${depth}"
+          data-x="${x}"
+          data-basey="${baseY}">
+          <video autoplay muted loop playsinline>
+            <source src="${src}" type="video/mp4" />
+          </video>
+        </div>
+      `;
+    })
+    .join("");
+
+  parallaxCards = Array.from(document.querySelectorAll(".parallax-card"));
+};
+
+buildParallaxVideos();
+
+
+// ===============================
+// SCROLL STATE (SAFE)
+// ===============================
+
+let lastScrollY = window.scrollY;
+let scrollOffset = 0;
+
+window.addEventListener("scroll", () => {
+  const currentY = window.scrollY;
+  const delta = currentY - lastScrollY;
+
+  // apply opposite-direction movement
+  scrollOffset += -delta * 0.01;
+
+  lastScrollY = currentY;
+});
+
+
+// ===============================
+// RENDER LOOP
+// ===============================
+
+const updateParallax = () => {
+  if (!parallaxStage) return;
+  const rect = parallaxStage.getBoundingClientRect();
+  const W = rect.width;
+  const H = rect.height;
+
+  const idleGravity = 0.01;
+
+  // slow drift when not scrolling
+  scrollOffset += idleGravity;
+
+  parallaxCards.forEach((card) => {
+    const x = parseFloat(card.dataset.x);
+    const baseY = parseFloat(card.dataset.basey);
+
+    const depthSpeed =
+      card.classList.contains("parallax-front") ? 0.6 :
+      card.classList.contains("parallax-mid") ? 1.0 :
+      1.6;
+
+    const finalY = baseY + scrollOffset * depthSpeed;
+
+    const scale =
+      card.classList.contains("parallax-front") ? 1.05 :
+      card.classList.contains("parallax-mid") ? 0.98 :
+      0.92;
+
+    const xPx = (x / 100) * W;
+    const yPx = (finalY / 100) * H;
+
+    card.style.transform = `
+      translate3d(${xPx}px, ${yPx}px, 0)
+      scale(${scale})
+    `;
+  });
+
+  requestAnimationFrame(updateParallax);
+};
+
+requestAnimationFrame(updateParallax);
+  </script>
+
+  <script>
+    (function () {
+      document.querySelectorAll(".btn.primary, .btn.ghost").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var href = btn.getAttribute("href");
+          if (!href || href.charAt(0) !== "#") return;
+          var target = document.querySelector(href);
+          if (!target) return;
+          e.preventDefault();
+          var header = document.querySelector(".site-header");
+          var offset = header ? header.getBoundingClientRect().height : 0;
+          window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - offset);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
