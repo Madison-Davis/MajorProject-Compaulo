@@ -105,6 +105,16 @@ body {
   scroll-behavior: smooth;
 }
 
+html {
+  background: #000;
+}
+
+.page-transitioning {
+  opacity: 0 !important;
+  transition: opacity 300ms ease !important;
+  pointer-events: none !important;
+}
+
 body {
   font-family: var(--font-body);
   font-weight: var(--font-weight-body);

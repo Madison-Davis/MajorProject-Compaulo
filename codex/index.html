@@ -14,7 +14,7 @@
     <div class="container nav-wrap">
       <a class="brand" href="../index.html">COMPAULO</a>
       <nav class="nav-pill" aria-label="Site navigation">
-        <a class="nav-pill-link" href="../index.html">PORTFOLIO</a>
+        <a class="nav-pill-link" href="../portfolio/index.html">PORTFOLIO</a>
         <a class="nav-pill-link" href="#top">CODEX</a>
         <a class="nav-pill-link" href="../cortex/index.html">CORTEX</a>
       </nav>
@@ -167,6 +167,17 @@
   </main>
 
   <script>
+    // Fade out before navigating to another page
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || a.target === '_blank' || href.indexOf('://') !== -1) return;
+      e.preventDefault();
+      document.body.classList.add('page-transitioning');
+      setTimeout(function() { window.location.href = href; }, 300);
+    }, true);
+
     document.querySelectorAll('.lab-accord-header').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = btn.closest('.lab-accord-item');
