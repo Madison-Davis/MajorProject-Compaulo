@@ -42,6 +42,55 @@
         linear-gradient(to top,    rgba(0,0,0,0.92) 0%, transparent 18%);
     }
 
+    /* ── Spline / map stacking stage ── */
+    .spline-map-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 6;
+      isolation: isolate;
+    }
+    .spline-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+    .spline-layer iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+    /* Cover Spline watermark at bottom-right */
+    .spline-cover-br {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 160px;
+      height: 40px;
+      background: #080808;
+      z-index: 25;
+      pointer-events: none;
+    }
+.spline-map-stage .earth-map-wrap {
+      position: absolute !important;
+      inset: 0;
+      aspect-ratio: unset !important;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 1.2s ease;
+    }
+    .spline-map-stage .earth-map-wrap.map-revealed {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 30;
+    }
+
     /* ── Attribution ── */
     .leaflet-control-attribution {
       background: rgba(8, 8, 8, 0.8) !important;
@@ -158,9 +207,9 @@
     <section id="home" class="section reveal" style="padding-top:12rem;">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <p class="kicker">ENVIRONMENTAL INTELLIGENCE</p>
+          <p class="kicker">WORLD OF WONDER</p>
           <h1>CORTEX</h1>
-          <p class="lead">Map the world.  Discover new technical projects, connect with organizations, and experiment at home.</p>
+          <p class="lead">Discover technical innovations, connect with organizations, and experiment right at home.</p>
           <div class="hero-actions">
             <a class="btn primary" href="#projects">Explore Projects</a>
             <a class="btn ghost" href="#organizations">View Organizations</a>
@@ -173,7 +222,7 @@
     <section id="about" class="section reveal">
       <div class="container">
         <h2 class="section-title">WHAT IS CORTEX</h2>
-        <p class="section-intro">Cortex is a technological innovation platform — a living atlas of work happening across the globe aimed for practical conservation.</p>
+        <p class="section-intro">Cortex is a living atlas of technical innovation shaped by the world's needs.</p>
         <div class="card-grid three">
           <article class="card overview-card reveal">
             <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>01</p>
@@ -219,8 +268,14 @@
         </div>
       </div>
       <div class="map-bleed reveal">
-        <div class="earth-map-wrap">
-          <div id="cortex-map"></div>
+        <div class="spline-map-stage">
+          <div class="spline-layer">
+            <iframe src='https://my.spline.design/aidatamodelinteraction-7oFQS7ixVRhU1kUjVE0q4s4x/' frameborder='0' width='100%' height='100%'></iframe>
+            <div class="spline-cover-br"></div>
+          </div>
+          <div class="earth-map-wrap" id="map-layer">
+            <div id="cortex-map"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -444,6 +499,40 @@
       marker.on("mouseover", function () { this.openPopup(); });
       marker.on("mouseout", function () { this.closePopup(); });
     });
+
+    // Spline → map transition, scroll-driven with replay on re-entry
+    var mapRevealed = false;
+    var splineTimer = null;
+
+    function revealCortexMap() {
+      if (mapRevealed) return;
+      mapRevealed = true;
+      splineTimer = null;
+      document.getElementById("map-layer").classList.add("map-revealed");
+      setTimeout(function () { map.invalidateSize(); }, 300);
+    }
+
+    function resetToSpline() {
+      if (splineTimer) { clearTimeout(splineTimer); splineTimer = null; }
+      mapRevealed = false;
+      document.getElementById("map-layer").classList.remove("map-revealed");
+      // Reload iframe so Spline animation replays from the start
+      var frame = document.querySelector(".spline-layer iframe");
+      if (frame) { var s = frame.src; frame.src = ""; frame.src = s; }
+    }
+
+    // Scroll into view → let Spline play for 3 s, then fade in map
+    // Scroll back out → reset so Spline replays on next scroll-in
+    var stageObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && !mapRevealed) {
+          splineTimer = setTimeout(revealCortexMap, 3000);
+        } else if (!entry.isIntersecting) {
+          resetToSpline();
+        }
+      });
+    }, { threshold: 0.25 });
+    stageObs.observe(document.querySelector(".spline-map-stage"));
   </script>
 </body>
 </html>

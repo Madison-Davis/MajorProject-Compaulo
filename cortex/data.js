@@ -1,226 +1,218 @@
 const CORTEX_PROJECTS = [
   {
-    lat: -3.47,
-    lon: -62.22,
-    title: "Amazon Rainforest Protection",
-    description: "Protecting 2.7M acres of primary rainforest in the Brazilian Amazon through indigenous land rights and satellite monitoring.",
-    link: "#",
-    featured: true
+    "lat": 42.3770,
+    "lon": -71.1167,
+    "theme": "education",
+    "title": "AI Tutor Systems",
+    "description": "Personalized AI tutors provide adaptive learning support to students.",
+    "link": "https://www.khanacademy.org/khan-labs",
+    "featured": true
   },
   {
-    lat: -2.33,
-    lon: 34.83,
-    title: "Serengeti Wildlife Corridor",
-    description: "Maintaining migration routes for 1.5M wildebeest and 250,000 zebra across Tanzania and Kenya through land-use agreements.",
-    link: "#",
-    featured: true
+    "lat": 37.4275,
+    "lon": -122.1697,
+    "theme": "education",
+    "title": "Virtual Reality Classrooms",
+    "description": "VR platforms enable immersive science and history education experiences.",
+    "link": "https://www.classvr.com",
+    "featured": true
   },
   {
-    lat: -18.29,
-    lon: 147.70,
-    title: "Great Barrier Reef Restoration",
-    description: "Coral bleaching recovery program spanning 344,400 km² of reef ecosystem off the Queensland coast.",
-    link: "#",
-    featured: true
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "theme": "education",
+    "title": "Learning Analytics AI",
+    "description": "Machine learning identifies struggling students and recommends interventions.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 1.0,
-    lon: 114.0,
-    title: "Heart of Borneo",
-    description: "Transboundary conservation of 220,000 km² of tropical rainforest across Malaysia, Indonesia, and Brunei.",
-    link: "#",
-    featured: true
+    "lat": 36.7783,
+    "lon": -119.4179,
+    "theme": "food",
+    "title": "AI Crop Monitoring",
+    "description": "Computer vision analyzes crop health and predicts yields.",
+    "link": "https://www.climatefieldview.com",
+    "featured": true
   },
   {
-    lat: -0.2,
-    lon: 25.0,
-    title: "Congo Basin Forest Alliance",
-    description: "Protecting the world's second-largest tropical forest, home to forest elephants, gorillas, and bonobos.",
-    link: "#",
-    featured: true
+    "lat": 41.8781,
+    "lon": -87.6298,
+    "theme": "food",
+    "title": "Autonomous Farm Robots",
+    "description": "Robots use AI to weed, harvest, and monitor fields.",
+    "link": "https://carbonrobotics.com",
+    "featured": true
   },
   {
-    lat: -18.0,
-    lon: -57.0,
-    title: "Pantanal Wetlands Initiative",
-    description: "Restoring the world's largest tropical wetland spanning Brazil, Bolivia, and Paraguay after record fires.",
-    link: "#",
-    featured: true
+    "lat": 52.3676,
+    "lon": 4.9041,
+    "theme": "food",
+    "title": "Precision Agriculture Platforms",
+    "description": "Sensor networks optimize fertilizer and water usage.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 49.0,
-    lon: -113.0,
-    title: "Yellowstone to Yukon",
-    description: "Connecting wilderness areas from Wyoming to Alaska to allow large carnivore populations to roam freely.",
-    link: "#",
-    featured: false
+    "lat": 32.7157,
+    "lon": -117.1611,
+    "theme": "water",
+    "title": "Smart Water Leak Detection",
+    "description": "AI systems detect underground pipe leaks before major failures occur.",
+    "link": "https://www.xylem.com",
+    "featured": true
   },
   {
-    lat: -18.77,
-    lon: 46.87,
-    title: "Madagascar Biodiversity Corridor",
-    description: "Safeguarding lemur habitats and endemic plant species across fragmented forest patches in the highlands.",
-    link: "#",
-    featured: false
+    "lat": 1.3521,
+    "lon": 103.8198,
+    "theme": "water",
+    "title": "Autonomous Water Quality Sensors",
+    "description": "IoT devices continuously monitor reservoirs and waterways.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 28.0,
-    lon: 84.0,
-    title: "Himalayan Climate Corridor",
-    description: "Enabling climate-driven species migration across Nepal, India, and Bhutan through connectivity planning.",
-    link: "#",
-    featured: false
+    "lat": 25.2048,
+    "lon": 55.2708,
+    "theme": "water",
+    "title": "AI Desalination Optimization",
+    "description": "Machine learning improves efficiency of desalination plants.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 18.0,
-    lon: -87.5,
-    title: "Mesoamerican Reef System",
-    description: "Protecting 1,000 km of reef stretching from Mexico to Honduras — the world's second-largest barrier reef.",
-    link: "#",
-    featured: false
+    "lat": 42.3601,
+    "lon": -71.0589,
+    "theme": "health",
+    "title": "AI Medical Imaging",
+    "description": "Deep learning assists doctors in detecting diseases from scans.",
+    "link": "https://www.nvidia.com/en-us/healthcare",
+    "featured": true
   },
   {
-    lat: 45.0,
-    lon: 135.0,
-    title: "Amur Tiger Habitat Recovery",
-    description: "Expanding protected forest in Russia's Primorsky Krai to support critically endangered Amur tiger populations.",
-    link: "#",
-    featured: false
+    "lat": 30.2672,
+    "lon": -97.7431,
+    "theme": "health",
+    "title": "Remote Patient Monitoring",
+    "description": "Wearable sensors transmit real-time health data to clinicians.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 15.0,
-    lon: 2.0,
-    title: "Sahel Great Green Wall",
-    description: "Reforestation across 11 African nations to halt desertification and restore 100M hectares by 2030.",
-    link: "#",
-    featured: false
+    "lat": 37.7749,
+    "lon": -122.4194,
+    "theme": "health",
+    "title": "Autonomous Medical Delivery Drones",
+    "description": "Drones transport medicine and blood supplies to remote locations.",
+    "link": "https://www.zipline.com",
+    "featured": true
   },
   {
-    lat: -50.0,
-    lon: -73.0,
-    title: "Patagonia Rewilding",
-    description: "Reintroducing jaguar, huemul deer, and guanaco to restored grasslands in Argentine and Chilean Patagonia.",
-    link: "#",
-    featured: false
+    "lat": -1.2921,
+    "lon": 36.8219,
+    "theme": "animals",
+    "title": "AI Anti-Poaching Systems",
+    "description": "Computer vision and sensors detect threats to wildlife.",
+    "link": "https://www.resolve.ngo",
+    "featured": true
   },
   {
-    lat: 12.5,
-    lon: 105.0,
-    title: "Mekong Freshwater Conservation",
-    description: "Protecting the Mekong River's endemic fish species and wetland habitats across Southeast Asia.",
-    link: "#",
-    featured: false
+    "lat": -24.3456,
+    "lon": 25.9089,
+    "theme": "animals",
+    "title": "Wildlife Tracking Networks",
+    "description": "GPS and IoT systems monitor animal migration patterns.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 64.96,
-    lon: -19.02,
-    title: "Iceland Highland Restoration",
-    description: "Revegetating eroded highland lava fields to recover soil carbon and native moss ecosystems at scale.",
-    link: "#",
-    featured: false
+    "lat": -3.4653,
+    "lon": -62.2159,
+    "theme": "animals",
+    "title": "Acoustic Rainforest Monitoring",
+    "description": "AI identifies animal species from forest audio recordings.",
+    "link": "https://rfcx.org",
+    "featured": true
   },
   {
-    lat: 65.0,
-    lon: 26.0,
-    title: "Nordic Peatland Protection",
-    description: "Conserving Scandinavian boreal peatlands that store more carbon per hectare than tropical forests.",
-    link: "#",
-    featured: false
+    "lat": 37.8651,
+    "lon": -119.5383,
+    "theme": "plants",
+    "title": "AI Wildfire Detection",
+    "description": "Camera networks and AI identify wildfire ignition in real time.",
+    "link": "https://www.dryad.net",
+    "featured": true
   },
   {
-    lat: 5.0,
-    lon: -3.0,
-    title: "West African Mangrove Restoration",
-    description: "Replanting coastal mangrove belts in Ghana, Côte d'Ivoire, and Liberia for fishery and climate resilience.",
-    link: "#",
-    featured: false
+    "lat": -3.1190,
+    "lon": -60.0217,
+    "theme": "plants",
+    "title": "Satellite Forest Monitoring",
+    "description": "AI analyzes satellite imagery to track deforestation.",
+    "link": "https://globalforestwatch.org",
+    "featured": true
   },
   {
-    lat: 38.0,
-    lon: 15.0,
-    title: "Mediterranean Marine Network",
-    description: "Expanding marine protected areas across 22 countries to safeguard posidonia meadows and bluefin tuna.",
-    link: "#",
-    featured: false
+    "lat": 60.1699,
+    "lon": 24.9384,
+    "theme": "plants",
+    "title": "Smart Greenhouse Systems",
+    "description": "Sensors and AI optimize growing conditions for crops.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 52.0,
-    lon: 22.0,
-    title: "European Rewilding Network",
-    description: "Returning bison, lynx, and wolves to former habitats across Poland, Romania, and the Carpathians.",
-    link: "#",
-    featured: false
+    "lat": 35.6895,
+    "lon": 139.6917,
+    "theme": "energy",
+    "title": "Smart Grid AI",
+    "description": "Machine learning balances electricity demand and supply.",
+    "link": "https://www.hitachi.com",
+    "featured": true
   },
   {
-    lat: -58.0,
-    lon: 60.0,
-    title: "Southern Ocean Sanctuary",
-    description: "Campaigning for the world's largest ocean reserve to protect Antarctic krill, penguins, and humpback whales.",
-    link: "#",
-    featured: false
+    "lat": 55.7558,
+    "lon": 37.6173,
+    "theme": "energy",
+    "title": "Predictive Wind Turbine Maintenance",
+    "description": "AI predicts equipment failures before they occur.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 22.5,
-    lon: 80.0,
-    title: "Central India Tiger Corridor",
-    description: "Securing forest connectivity between Panna and Kanha tiger reserves to maintain genetic diversity.",
-    link: "#",
-    featured: false
+    "lat": 39.7392,
+    "lon": -104.9903,
+    "theme": "energy",
+    "title": "Solar Forecasting Systems",
+    "description": "AI predicts solar energy production from weather data.",
+    "link": "#",
+    "featured": true
   },
   {
-    lat: 8.0,
-    lon: 38.0,
-    title: "Ethiopian Highland Reforestation",
-    description: "Community-led afforestation recovering 100,000 hectares of degraded land in the Ethiopian highlands.",
-    link: "#",
-    featured: false
+    "lat": 37.4848,
+    "lon": -122.1484,
+    "theme": "innovation",
+    "title": "Autonomous Delivery Robots",
+    "description": "Self-driving robots transport goods across campuses and cities.",
+    "link": "https://serve.com",
+    "featured": true
   },
   {
-    lat: -33.0,
-    lon: 26.0,
-    title: "Cape Floral Kingdom",
-    description: "Protecting South Africa's fynbos biome — one of the world's most biodiverse terrestrial hotspots.",
-    link: "#",
-    featured: false
+    "lat": 47.6062,
+    "lon": -122.3321,
+    "theme": "innovation",
+    "title": "Generative AI Research Platforms",
+    "description": "Large AI models accelerate software development and discovery.",
+    "link": "https://openai.com",
+    "featured": true
   },
   {
-    lat: -43.5,
-    lon: 172.5,
-    title: "Aotearoa Predator-Free Sanctuaries",
-    description: "Island reserves in New Zealand protecting kiwi, kakapo, and native forest birds from invasive predators.",
-    link: "#",
-    featured: false
-  },
-  {
-    lat: 33.0,
-    lon: 45.0,
-    title: "Mesopotamian Marshes Restoration",
-    description: "Reflooding the drained Tigris-Euphrates wetlands in Iraq — cradle of civilization and endangered otter habitat.",
-    link: "#",
-    featured: false
-  },
-  {
-    lat: 68.0,
-    lon: 68.0,
-    title: "West Siberian Wilderness Reserve",
-    description: "Designating new protected zones to shield intact boreal forest and permafrost from industrial expansion.",
-    link: "#",
-    featured: false
-  },
-  {
-    lat: 24.0,
-    lon: -10.0,
-    title: "Saharan Cheetah Refuge",
-    description: "Radio-tracking and protecting critically endangered Saharan cheetah populations across North Africa.",
-    link: "#",
-    featured: false
-  },
-  {
-    lat: -27.0,
-    lon: 153.0,
-    title: "Daintree Rainforest Buyback",
-    description: "Purchasing privately held land within the Daintree lowlands to permanently remove development risk.",
-    link: "#",
-    featured: false
+    "lat": 48.8566,
+    "lon": 2.3522,
+    "theme": "innovation",
+    "title": "Digital Twin Cities",
+    "description": "Virtual city models simulate infrastructure and urban planning decisions.",
+    "link": "#",
+    "featured": true
   }
-];
+]
