@@ -8,186 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="data.js"></script>
-  <style>
-    /* ── Leaflet map container ── */
-    #cortex-map {
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
-      background: #080808;
-    }
-
-    /* ── Full-bleed map wrapper ── */
-    .map-bleed {
-      width: 100%;
-    }
-    .map-bleed .earth-map-wrap {
-      border-radius: 0;
-      border-left: none;
-      border-right: none;
-      aspect-ratio: 16 / 6;
-    }
-    .map-bleed .earth-map-wrap::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1001;
-      background:
-        linear-gradient(to right,  #000 0%, rgba(0,0,0,0.55) 7%, transparent 15%),
-        linear-gradient(to left,   #000 0%, rgba(0,0,0,0.55) 7%, transparent 15%),
-        linear-gradient(to top,    rgba(0,0,0,0.92) 0%, transparent 18%);
-    }
-
-    /* ── Spline / map stacking stage ── */
-    .spline-map-stage {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 6;
-      isolation: isolate;
-    }
-    .spline-layer {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      transform: translateZ(0);
-      will-change: transform;
-    }
-    .spline-layer iframe {
-      width: 100%;
-      height: 100%;
-      display: block;
-      transform: translateZ(0);
-      will-change: transform;
-    }
-    /* Cover Spline watermark at bottom-right */
-    .spline-cover-br {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 160px;
-      height: 40px;
-      background: #080808;
-      z-index: 25;
-      pointer-events: none;
-    }
-.spline-map-stage .earth-map-wrap {
-      position: absolute !important;
-      inset: 0;
-      aspect-ratio: unset !important;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 10;
-      transition: opacity 1.2s ease;
-    }
-    .spline-map-stage .earth-map-wrap.map-revealed {
-      opacity: 1;
-      pointer-events: auto;
-      z-index: 30;
-    }
-
-    /* ── Attribution ── */
-    .leaflet-control-attribution {
-      background: rgba(8, 8, 8, 0.8) !important;
-      color: #555 !important;
-      font-size: 0.58rem;
-      border-top-left-radius: 8px;
-    }
-    .leaflet-control-attribution a {
-      color: #666 !important;
-    }
-
-    /* ── Custom dot markers ── */
-    .cortex-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #a6a6a6;
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 0 8px rgba(255,255,255,0.25);
-      cursor: pointer;
-      transition: transform 180ms ease, box-shadow 180ms ease;
-    }
-    .cortex-dot:hover {
-      transform: scale(1.6);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.22), 0 0 14px rgba(255,255,255,0.4);
-    }
-    .cortex-dot.featured {
-      width: 12px;
-      height: 12px;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.18), 0 0 14px rgba(255,255,255,0.45);
-    }
-    .cortex-dot.featured:hover {
-      transform: scale(1.4);
-      box-shadow: 0 0 0 4px rgba(255,255,255,0.28), 0 0 22px rgba(255,255,255,0.6);
-    }
-
-    /* ── Popup ── */
-    .leaflet-popup-content-wrapper {
-      background: #111111;
-      border: 1px solid #202020;
-      border-radius: 12px !important;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.55);
-      color: #f3f5f8;
-      padding: 0;
-    }
-    .leaflet-popup-content {
-      margin: 1.1rem 1.2rem;
-      min-width: 220px;
-      max-width: 260px;
-    }
-    .leaflet-popup-tip-container {
-      display: none;
-    }
-    .leaflet-popup-close-button {
-      color: #555 !important;
-      font-size: 18px !important;
-      top: 8px !important;
-      right: 10px !important;
-    }
-    .leaflet-popup-close-button:hover {
-      color: #aaa !important;
-      background: transparent !important;
-    }
-    .cortex-popup-title {
-      font-family: "Manrope", sans-serif;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: #ffffff;
-      margin: 0 0 0.5rem;
-    }
-    .cortex-popup-desc {
-      font-family: "Manrope", sans-serif;
-      font-size: 0.76rem;
-      color: #a6a6a6;
-      line-height: 1.55;
-      margin: 0 0 0.85rem;
-    }
-    .cortex-popup-link {
-      font-family: "Manrope", sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: #a6a6a6;
-      border: 1px solid #202020;
-      border-radius: 999px;
-      padding: 0.2rem 0.6rem;
-      display: inline-block;
-      text-decoration: none;
-      transition: border-color 180ms ease, color 180ms ease;
-    }
-    .cortex-popup-link:hover {
-      border-color: #404040;
-      color: #f3f5f8;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
@@ -244,11 +64,11 @@
     </section>
 
     <!-- VIEW ALL PROJECTS -->
-    <section id="projects" class="section reveal">
+    <section id="projects" class="section">
       <div class="container">
         <h2 class="section-title">VIEW ALL PROJECTS</h2>
-        <p class="section-intro">128 active conservation projects tracked across 63 countries. Click any marker to explore project details, funding, and outcomes.</p>
-        <div class="cortex-stats reveal">
+        <p class="section-intro">Click any marker to explore project details, funding, and outcomes.</p>
+        <div class="cortex-stats">
           <div class="cortex-stat">
             <span class="cortex-stat-num">128</span>
             <span class="cortex-stat-label">Active Projects</span>
@@ -267,15 +87,12 @@
           </div>
         </div>
       </div>
-      <div class="map-bleed reveal">
-        <div class="spline-map-stage">
-          <div class="spline-layer">
-            <iframe src='https://my.spline.design/aidatamodelinteraction-7oFQS7ixVRhU1kUjVE0q4s4x/' frameborder='0' width='100%' height='100%'></iframe>
-            <div class="spline-cover-br"></div>
+      <div class="map-bleed" style="width:100%;background:#080808;display:flex;justify-content:center;align-items:center;">
+        <div class="spline-map-stage" style="position:relative;width:100%;aspect-ratio:16/9;background:#080808;overflow:hidden;">
+          <div class="spline-layer" style="position:absolute;top:0;left:0;right:0;bottom:0;">
+            <iframe src="https://my.spline.design/aidatamodelinteraction-7oFQS7ixVRhU1kUjVE0q4s4x/" frameborder="0" style="width:100%;height:100%;display:block;border:none;background:#080808;"></iframe>
           </div>
-          <div class="earth-map-wrap" id="map-layer">
-            <div id="cortex-map"></div>
-          </div>
+          <div style="position:absolute;bottom:0;right:0;width:160px;height:70px;background:#000000;z-index:25;pointer-events:none;"></div>
         </div>
       </div>
     </section>
@@ -435,104 +252,7 @@
       });
     });
 
-    // Leaflet map
-    const map = L.map("cortex-map", {
-      center: [18, 10],
-      zoom: 2,
-      minZoom: 2,
-      maxZoom: 9,
-      scrollWheelZoom: false,
-      zoomSnap: 0,
-      worldCopyJump: true,
-      zoomControl: false
-    });
 
-    // Smooth scroll-wheel zoom: accumulate target, lerp toward it each frame
-    var zoomTarget = map.getZoom();
-    var zoomRaf = null;
-    document.getElementById("cortex-map").addEventListener("wheel", function (e) {
-      e.preventDefault();
-      var delta = e.deltaY;
-      if (e.deltaMode === 1) delta *= 30;   // lines → px
-      if (e.deltaMode === 2) delta *= 300;  // pages → px
-      zoomTarget = Math.max(map.getMinZoom(),
-                   Math.min(map.getMaxZoom(), zoomTarget - delta / 700));
-      if (!zoomRaf) {
-        (function step() {
-          var diff = zoomTarget - map.getZoom();
-          if (Math.abs(diff) < 0.003) {
-            map.setZoom(zoomTarget, { animate: false });
-            zoomRaf = null;
-            return;
-          }
-          map.setZoom(map.getZoom() + diff * 0.1, { animate: false });
-          zoomRaf = requestAnimationFrame(step);
-        })();
-      }
-    }, { passive: false });
-
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 19
-    }).addTo(map);
-
-    CORTEX_PROJECTS.forEach(function (proj) {
-      var size = proj.featured ? 12 : 8;
-      var icon = L.divIcon({
-        className: "",
-        html: '<div class="cortex-dot' + (proj.featured ? " featured" : "") + '"></div>',
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
-        popupAnchor: [0, -(size / 2 + 10)]
-      });
-
-      var marker = L.marker([proj.lat, proj.lon], { icon: icon }).addTo(map);
-
-      marker.bindPopup(
-        '<p class="cortex-popup-title">' + proj.title + '</p>' +
-        '<p class="cortex-popup-desc">' + proj.description + '</p>' +
-        '<a class="cortex-popup-link" href="' + proj.link + '" target="_blank">Learn More ↗</a>',
-        { maxWidth: 280, minWidth: 220, closeButton: false, autoPan: false }
-      );
-
-      marker.on("mouseover", function () { this.openPopup(); });
-      marker.on("mouseout", function () { this.closePopup(); });
-    });
-
-    // Spline → map transition, scroll-driven with replay on re-entry
-    var mapRevealed = false;
-    var splineTimer = null;
-
-    function revealCortexMap() {
-      if (mapRevealed) return;
-      mapRevealed = true;
-      splineTimer = null;
-      document.getElementById("map-layer").classList.add("map-revealed");
-      setTimeout(function () { map.invalidateSize(); }, 300);
-    }
-
-    function resetToSpline() {
-      if (splineTimer) { clearTimeout(splineTimer); splineTimer = null; }
-      mapRevealed = false;
-      document.getElementById("map-layer").classList.remove("map-revealed");
-      // Reload iframe so Spline animation replays from the start
-      var frame = document.querySelector(".spline-layer iframe");
-      if (frame) { var s = frame.src; frame.src = ""; frame.src = s; }
-    }
-
-    // Scroll into view → let Spline play for 3 s, then fade in map
-    // Scroll back out → reset so Spline replays on next scroll-in
-    var stageObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting && !mapRevealed) {
-          splineTimer = setTimeout(revealCortexMap, 3000);
-        } else if (!entry.isIntersecting) {
-          resetToSpline();
-        }
-      });
-    }, { threshold: 0.25 });
-    stageObs.observe(document.querySelector(".spline-map-stage"));
   </script>
 </body>
 </html>
