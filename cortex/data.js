@@ -99,12 +99,12 @@ const CORTEX_PROJECTS = [
     "featured": true
   },
   {
-    "lat": 37.7749,
-    "lon": -122.4194,
+    "lat": 2.00,
+    "lon": 30.00,
     "theme": "health",
     "title": "Autonomous Medical Delivery Drones",
-    "description": "Drones transport medicine and blood supplies to remote locations.",
-    "link": "https://www.zipline.com",
+    "description": "Zipline AI-enabled drones transport medical supplies to hospitals.",
+    "link": "https://www.youtube.com/watch?v=73rUjrow5pI",
     "featured": true
   },
   {
@@ -135,12 +135,12 @@ const CORTEX_PROJECTS = [
     "featured": true
   },
   {
-    "lat": 37.8651,
-    "lon": -119.5383,
+    "lat": 17.6078,
+    "lon": 8.0817,
     "theme": "plants",
-    "title": "AI Wildfire Detection",
-    "description": "Camera networks and AI identify wildfire ignition in real time.",
-    "link": "https://www.dryad.net",
+    "title": "Great Green Wall",
+    "description": "Follow Andrew Millison with the UN World Food Programme to explore Zai Pits in Niger.",
+    "link": "https://www.youtube.com/watch?v=xbBdIG--b58&list=PLXJl174AJywGQsu5W4-0xc0H77GIKuQsE&index=4",
     "featured": true
   },
   {
