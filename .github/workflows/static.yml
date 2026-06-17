@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          token: ${{ secrets.CODEX_TOKEN }}
       - name: Build Codex
         run: bash codex/scripts/build-codex.sh
       - name: Setup Pages

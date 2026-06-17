@@ -1282,6 +1282,12 @@ body.modal-open {
   margin: 0.3rem 0 0;
 }
 
+.tpl-chapter-subtitle {
+  font-size: clamp(1.4rem, 3vw, 1.6rem);
+  text-align: left;
+  margin: 0.3rem 0 0;
+}
+
 .tpl-chapter-body {
   display: flex;
   flex-direction: column;

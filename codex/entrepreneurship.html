@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENTREPRENEURSHIP — Learn a Bit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+  <!-- ── HEADER ──────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="../index.html">COMPAULO</a>
+      <nav class="nav-pill" aria-label="Site navigation">
+        <a class="nav-pill-link" href="../index.html">PORTFOLIO</a>
+        <a class="nav-pill-link" href="index.html">LEARN A BIT</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── TWO-PANEL LAYOUT ────────────────────────────────────── -->
+  <div class="tpl-layout">
+
+    <!-- LEFT: Table of Contents -->
+    <aside class="tpl-toc">
+      <a class="tpl-back-btn" href="index.html">← Back</a>
+      <p class="tpl-toc-label">CHAPTERS</p>
+      <nav>
+        <button class="toc-link is-active" data-target="ch-1">
+          <span class="toc-num">1</span>
+          <span>Chapter 1</span>
+        </button>
+        <button class="toc-link" data-target="ch-2">
+          <span class="toc-num">2</span>
+          <span>Chapter 2</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- RIGHT: Chapter Content -->
+    <main class="tpl-content">
+
+      <!-- ── CONTENT HEADER (static, above all chapters) ────── -->
+      <div class="tpl-content-header">
+        <h1>LEARN A BIT</h1>
+        <h3 class="tpl-content-title">ENTREPRENEURSHIP</h3>
+      </div>
+
+      <!-- ── CHAPTER 01: BASICS ─────────────────────────────── -->
+            <div class="tpl-chapter is-active" id="ch-1">
+        <div class="tpl-chapter-header">
+          <p class="kicker">CHAPTER 1</p>
+          <h2 class="tpl-chapter-title">Chapter 1</h2>
+        </div>
+        <div class="tpl-chapter-body">
+          <h3 class="tpl-chapter-subtitle">Subtopic</h3>
+          <p>some text</p>
+        </div>
+      </div>
+
+      <div class="tpl-chapter" id="ch-2">
+        <div class="tpl-chapter-header">
+          <p class="kicker">CHAPTER 2</p>
+          <h2 class="tpl-chapter-title">Chapter 2</h2>
+        </div>
+        <div class="tpl-chapter-body">
+          <h3 class="tpl-chapter-subtitle">Subtopic</h3>
+          <p>other text</p>
+        </div>
+      </div>
+
+
+    </main>
+  </div>
+
+  <script>
+    const links = document.querySelectorAll('.toc-link');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        const targetId = link.dataset.target;
+        const current  = document.querySelector('.tpl-chapter.is-active');
+        const target   = document.getElementById(targetId);
+        if (!target || current === target) return;
+
+        links.forEach(l => l.classList.remove('is-active'));
+        link.classList.add('is-active');
+
+        // Fade out current chapter
+        current.style.opacity = '0';
+        setTimeout(() => {
+          current.classList.remove('is-active');
+          current.style.opacity = '';
+
+          // Fade in next chapter
+          target.style.opacity = '0';
+          target.classList.add('is-active');
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            target.style.opacity = '1';
+          }));
+        }, 260);
+      });
+    });
+  </script>
+
+</body>
+</html>
