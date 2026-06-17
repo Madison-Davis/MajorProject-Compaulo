@@ -15,9 +15,9 @@ while IFS= read -r FILE; do
   if grep -q "^  - Public" "$FILE"; then
     BASENAME="$(basename "$FILE" .md)"
     OUTNAME="$(echo "$BASENAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').html"
-    OUTPATH="$CODEX/$OUTNAME"
+    OUTPATH="$CODEX/pages/$OUTNAME"
 
-    python3 - "$FILE" "$CODEX/template.html" "$OUTPATH" << 'PYEOF'
+    python3 - "$FILE" "$CODEX/pages/template.html" "$OUTPATH" << 'PYEOF'
 import sys, re, os
 
 md_file, template_file, out_file = sys.argv[1], sys.argv[2], sys.argv[3]
