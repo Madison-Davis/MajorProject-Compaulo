@@ -6,7 +6,7 @@ GIT_ROOT="$(cd "$CODEX/.." && pwd)"
 SUBMODULE="$CODEX/codex-content"
 
 echo "Updating submodule..."
-git -C "$GIT_ROOT" submodule update --remote --merge codex/codex-content
+git -C "$GIT_ROOT" submodule update --remote codex/codex-content
 
 echo ""
 echo "Building public-tagged files..."
