@@ -1,0 +1,3 @@
+[submodule "codex/codex-content"]
+	path = codex/codex-content
+	url = https://github.com/Madison-Davis/MajorProject-Codex
