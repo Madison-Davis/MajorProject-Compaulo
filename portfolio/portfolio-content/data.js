@@ -1,44 +1,4 @@
 window.PORTFOLIO_DATA = {
-  featuredPublications: [
-    {
-      title: "Compositional Diffusion Language Models",
-      description:
-        "2025",
-      image: "assets/research/highlight1.png",
-      link: "assets/research/compositional-diffusion.pdf",
-    },
-    {
-      title: "PCRB Tiered Prioritized Replay Buffer",
-      description:
-        "2025",
-      image: "assets/research/highlight2.png",
-      link: "assets/research/tiered-replay-buffer.pdf",
-    },
-    {
-      title: "NPG Crystalline Reinforcement Learning",
-      description:
-        "2024",
-      image: "assets/research/highlight3.png",
-      link: "assets/research/crystalline.pdf",
-    },
-  ],
-  featuredVideos: [
-    {
-      video: "assets/videos/video1.mp4",
-      title: "CUBESAT",
-      description: "CLSI NASA program launch for April 2026",
-    },
-    {
-      video: "assets/videos/video2.mp4",
-      title: "VISION VALVE",
-      description: "water filtration system with 4x throughput vs industry standard",
-    },
-    {
-      video: "assets/videos/video3.mp4",
-      title: "CHEETAH: ACINONYX GENETICS",
-      description: "optimized breeding program for genetic bottlenecks",
-    },
-  ],
   projectGroups: [
     {
       title: "WORK",
@@ -66,7 +26,7 @@ window.PORTFOLIO_DATA = {
           title: "Climate.xyz",
           year: "2023",
           description: "Trained language models on multimodal data for optimized user journies through energy investment.",
-          link: "assets/work/climate.pdf",
+          link: "portfolio-content/assets/work/climate.pdf",
         },
         {
           title: "Phuc Laboratories",
@@ -78,7 +38,7 @@ window.PORTFOLIO_DATA = {
           title: "Clark Scholar",
           year: "2021",
           description: "Developed research on CNN architectures to extract best inputs for CT lung scans.",
-          link: "assets/work/clark.pdf",
+          link: "portfolio-content/assets/work/clark.pdf",
         },
         {
           title: "LPBI",
@@ -255,102 +215,51 @@ window.PORTFOLIO_DATA = {
           title: "Adaptive Certificate Prefetching",
           year: "systems",
           description: "Reduction of OSCP stapling soft-fails via dynamic traffic prediction.",
-          link: "assets/research/adaptive-certificate.pdf",
+          link: "portfolio-content/assets/research/adaptive-certificate.pdf",
         },
         {
           title: "SEDS HUCSat Design Dissertation",
           year: "systems",
           description: "Capstone graduate thesis defending CubeSAT software design.",
-          link: "assets/research/seds.pdf",
+          link: "portfolio-content/assets/research/seds.pdf",
         },
         {
           title: "Compositional Diffusion Modeling",
           year: "AI/RL",
           description: "1B conditional diffusion models, without textual topic tuning, offer stable improvements over joint baselines.",
-          link: "assets/research/compositional-diffusion.pdf",
+          link: "portfolio-content/assets/research/compositional-diffusion.pdf",
         },
         {
           title: "Sampler Conditioned Diffusion",
           year: "AI/RL",
           description: "Study of whether diffusion, conditioned on textual domain embedding guidance, can outperform autoregression.",
-          link: "assets/research/compositional-diffusion.pdf",
+          link: "portfolio-content/assets/research/compositional-diffusion.pdf",
         },
         {
           title: "Tiered Prioritized Replay Buffer",
           year: "AI/RL",
           description: "For RL experiences, quantize less important transitions in replay buffers to improve sample quantity.",
-          link: "assets/research/tiered-replay-buffer.pdf",
+          link: "portfolio-content/assets/research/tiered-replay-buffer.pdf",
         },
         {
           title: "Modeling Crystalline Structure with NPG",
           year: "AI/RL",
           description: "Determining optimal NPG, PPG, or REINFORCE methodology for complex crystalline energy structures.",
-          link: "assets/research/crystalline.pdf",
+          link: "portfolio-content/assets/research/crystalline.pdf",
         },
         {
           title: "Survey on AI Energy Grid Optimization",
           year: "AI/RL",
           description: "Focus on smart storage, energy distribution, demand, maintenance, and security.",
-          link: "assets/research/smart-grid-optimization.pdf",
+          link: "portfolio-content/assets/research/smart-grid-optimization.pdf",
         },
         {
           title: "CHEETAH: Optimized Breeding Program",
           year: "AI/RL",
           description: "Introduces divisive hierarchical clustering to find optimal breeding pairs in captive cheetah populations.",
-          link: "assets/research/cheetah-genetics.pdf",
+          link: "portfolio-content/assets/research/cheetah-genetics.pdf",
         },
       ],
     },
-  ],
-  publications: [
-    {
-      title: "Adaptive Certificate Prefetching",
-      summary: "Reduction of OSTP stapling soft-fails via dynamic traffic prediction.",
-      pdf: "assets/research/adaptive-certificate.pdf",
-      topic: "systems",
-    },
-    {
-      title: "SEDS HUCSat Design Dissertation",
-      summary: "Capstone graduate thesis defending CubeSAT software design.",
-      pdf: "assets/research/seds.pdf",
-      topic: "systems",
-    },
-    {
-      title: "Compositional Diffusion Modeling",
-      summary: "1B conditional diffusion models, without textual topic tuning, offer stable improvements over joint baselines.",
-      pdf: "assets/research/compositional-diffusion.pdf",
-      topic: "AI/RL",
-    },
-    {
-      title: "Sampler Conditioned Diffusion",
-      summary: "Study of whether diffusion, conditioned on textual domain embedding guidance, can outperform autoregression.",
-      pdf: "assets/research/compositional-diffusion.pdf",
-      topic: "AI/RL",
-    },
-    {
-      title: "Tiered Prioritized Replay Buffer",
-      summary: "For RL experiences, quantize less important transitions in replay buffers to improve sample quantity.",
-      pdf: "assets/research/tiered-replay-buffer.pdf",
-      topic: "AI/RL",
-    },
-    {
-      title: "Modeling Crystalline Structure with NPG",
-      summary: "Determining optimial NPG, PPG, or REINFORCE methodology for complex crystalline energy structures.",
-      pdf: "assets/research/crystalline.pdf",
-      topic: "AI/RL",
-    },
-    {
-      title: "Survey on AI Energy Grid Optimization",
-      summary: "Focus on smart storage, energy distribution, demand, maintenance, and security.",
-      pdf: "assets/research/smart-grid-optimization.pdf",
-      topic: "AI/RL",
-    },
-    {
-      title: "CHEETAH: Optimized Breeding Program For Genetic Bottlenecks",
-      summary: "Introduces divisive hierarhical clustering to find optimal breeding pairs in captive cheetah populations.",
-      pdf: "assets/research/cheetah-genetics.pdf",
-      topic: "AI/RL",
-    },
-    
   ],
 };

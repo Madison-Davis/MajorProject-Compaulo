@@ -1,18 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!--------------------------------------------
+  HEAD
+  -------------------------------------------->
 <head>
+  <!-- Meta & Viewport -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Title & Description -->
   <title>Compaulo</title>
   <meta name="description" content="HELLO! I'M MADISON DAVIS - Creator, developer, and systems thinker.">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <style>html,body{background:#000}</style>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="../styles.css">
+
+  <!-- External Scripts -->
   <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
 </head>
+
+<!--------------------------------------------
+  BODY
+  -------------------------------------------->
 <body>
+
+  <!--------------------------------------------
+    HEADER
+    -------------------------------------------->
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="#top">COMPAULO</a>
@@ -24,7 +44,11 @@
     </div>
   </header>
 
+  <!--------------------------------------------
+    MAIN
+    -------------------------------------------->
   <main id="top">
+
     <!-- HERO -->
     <section id="home" class="hero section reveal" style="position:relative;overflow:hidden;display:flex;flex-direction:column;">
       <spline-viewer id="hero-spline" url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;"></spline-viewer>
@@ -58,7 +82,7 @@
         })();
       </script>
       <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center, transparent 40%, #000 85%), linear-gradient(to bottom, #000 0%, transparent 18%, transparent 72%, #000 100%);"></div>
-      
+
       <div class="container hero-grid" style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:stretch;align-items:center;pointer-events:none;">
         <div class="reveal hero-copy" style="display:flex;flex-direction:column;justify-content:space-between;flex:1;width:100%;pointer-events:none;">
           <div class="hero-top" style="text-align:center;pointer-events:auto;">
@@ -79,7 +103,7 @@
       <div style="position:absolute;bottom:0;right:0;width:160px;height:70px;background:black;z-index:12;pointer-events:none;"></div>
     </section>
 
-    <!-- ABOUT ME -->
+    <!-- OVERVIEW -->
     <section id="overview" class="section reveal">
       <div class="container">
         <h2 class="section-title">FROM IDEATION, TO INNOVATION</h2>
@@ -106,7 +130,6 @@
         </div>
       </div>
     </section>
-
 
     <!-- IPHONE SHOWCASE -->
     <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
@@ -164,8 +187,7 @@
       })();
     </script>
 
-
-    <!-- ACCORDIONS -->
+    <!-- PROJECTS -->
     <section id="projects" class="section reveal">
       <div class="container">
         <div id="project-group-tabs" class="project-group-tabs reveal"></div>
@@ -174,7 +196,6 @@
         </div>
       </div>
     </section>
-
 
     <!-- LINKS -->
     <span id="links" style="display:block;height:0;"></span>
@@ -199,69 +220,40 @@
         </div>
         <div class="feature-split-right">
           <video autoplay loop muted playsinline>
-            <source src="assets/videos/v2_video1.mov" type="video/quicktime">
-            <source src="assets/videos/v2_video1.mov" type="video/mp4">
+            <source src="portfolio-content/assets/videos/computer1.mov" type="video/mp4">
           </video>
         </div>
       </div>
     </section>
+
   </main>
 
+  <!--------------------------------------------
+    SCRIPTS
+    -------------------------------------------->
 
-  </footer>
-  <script src="data.js"></script>
+  <!-- Data -->
+  <script src="portfolio-content/data.js"></script>
+
+  <!-- Project Tabs, Accordion, PDF Modal, Scroll Reveal -->
   <script>
+    //-- Data --//
     const data = window.PORTFOLIO_DATA || {
-      featuredPublications: [],
-      featuredVideos: [],
       projectGroups: [],
-      publications: [],
     };
 
-    const projectCardsEl = document.querySelector("#project-cards");
+    //-- DOM References --//
     const projectGroupTabsEl = document.querySelector("#project-group-tabs");
     const projectAccordionEl = document.querySelector("#project-accordion-list");
     const projectAccordionWrapEl = projectAccordionEl ? projectAccordionEl.closest(".project-accordion") : null;
-    const publicationAccordionEl = document.querySelector("#publication-accordion-list");
-    const slideshowTrack = document.querySelector(".slideshow-track");
-    const slideshowPrev = document.querySelector(".slideshow-arrow-prev");
-    const slideshowNext = document.querySelector(".slideshow-arrow-next");
-    const slideshowCaptionTitle = document.querySelector(".slideshow-caption h3");
-    const slideshowCaptionDescription = document.querySelector(".slideshow-caption p");
-    const pdfModal = document.querySelector("#pdf-modal");
-    const pdfFrame = document.querySelector("#pdf-frame");
-    const pdfClose = document.querySelector("#pdf-modal-close");
-    const pdfModalTitle = document.querySelector("#pdf-modal-title");
-
-    const renderFeaturedPublications = () => {
-      if (projectCardsEl) {
-        projectCardsEl.innerHTML = data.featuredPublications
-          .map(
-            (project) => `
-              <article class="project-card highlighted-card reveal">
-                <div class="highlight-inner">
-                  <div class="highlight-image-card">
-                    <img src="${project.image || "assets/images/highlight1.jpeg"}" alt="${project.title}" loading="lazy">
-                  </div>
-                  <div class="highlight-text-card">
-                    <div class="highlight-title-row">
-                      <h3>${project.title}</h3>
-                      <a class="highlight-link" href="${project.link || "#"}" target="_blank" aria-label="View ${project.title}">↗</a>
-                    </div>
-                    <p>${project.description}</p>
-                  </div>
-                </div>
-              </article>
-            `
-          )
-          .join("");
-      }
-
+    
+    //-- RenderProjectGroups: Build Tab Buttons + Single-Group Accordion Table //
+    const renderProjectGroups = () => {
       const groups = data.projectGroups || [];
       if (!projectAccordionEl || groups.length === 0) return;
-
       let activeGroupIndex = null;
 
+      //-- Create Buttons --//
       const renderGroupButtons = () => {
         if (!projectGroupTabsEl) return;
         projectGroupTabsEl.innerHTML = groups
@@ -282,8 +274,8 @@
             const nextIndex = Number(button.dataset.groupIndex);
             if (Number.isNaN(nextIndex)) return;
 
+            //-- Animate Accordion To Close --//
             if (nextIndex === activeGroupIndex) {
-              // Animate closed
               const item = projectAccordionEl.querySelector(".accordion-item");
               const panel = item ? item.querySelector(".accordion-panel") : null;
               if (item) item.classList.remove("is-open");
@@ -293,10 +285,11 @@
               setTimeout(() => {
                 if (projectAccordionWrapEl) projectAccordionWrapEl.classList.add("is-collapsed");
               }, 420);
-            } else {
+            } 
+            //-- Animate Accordion To Open --//
+            else {
               const prevItem = projectAccordionEl.querySelector(".accordion-item.is-open");
               const prevPanel = prevItem ? prevItem.querySelector(".accordion-panel") : null;
-
               activeGroupIndex = nextIndex;
               renderGroupButtons();
 
@@ -314,7 +307,6 @@
                   });
                 });
               };
-
               if (prevItem && prevPanel) {
                 prevItem.classList.remove("is-open");
                 prevPanel.style.maxHeight = "0px";
@@ -327,6 +319,7 @@
         });
       };
 
+      //-- Create Single-Group Accordion Table --//
       const renderSingleGroup = () => {
         if (activeGroupIndex === null) {
           if (projectAccordionWrapEl) projectAccordionWrapEl.classList.add("is-collapsed");
@@ -374,59 +367,14 @@
         `;
       };
 
+      //-- Render Buttons and Accordion Tables --//
       renderGroupButtons();
       renderSingleGroup();
     };
-    
-    renderFeaturedPublications();
+    renderProjectGroups();
 
-    const openPdfModal = (pdfPath, title) => {
-      if (!pdfModal || !pdfFrame) return;
-      pdfFrame.src = pdfPath;
-      if (pdfModalTitle) pdfModalTitle.textContent = title || "Publication PDF";
-      pdfModal.classList.add("is-open");
-      pdfModal.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
-    };
-
-    const closePdfModal = () => {
-      if (!pdfModal || !pdfFrame) return;
-      pdfModal.classList.remove("is-open");
-      pdfModal.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("modal-open");
-      pdfFrame.src = "";
-    };
-
-    document.addEventListener("click", (event) => {
-      if (!(event.target instanceof Element)) return;
-      const link = event.target.closest(".publication-open");
-      if (!link) return;
-      event.preventDefault();
-      const pdfPath = link.dataset.pdf;
-      if (!pdfPath || pdfPath === "#") return;
-      openPdfModal(pdfPath, link.dataset.title);
-    });
-
-    if (pdfClose) {
-      pdfClose.addEventListener("click", closePdfModal);
-    }
-
-    if (pdfModal) {
-      pdfModal.addEventListener("click", (event) => {
-        if (event.target instanceof HTMLElement && event.target.dataset.close === "true") {
-          closePdfModal();
-        }
-      });
-    }
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && pdfModal && pdfModal.classList.contains("is-open")) {
-        closePdfModal();
-      }
-    });
-
+    //-- RevealObserver: Fade .reveal Elements In/Out as They Enter the Viewport --//
     const revealElements = document.querySelectorAll(".reveal");
-
     const revealObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -439,237 +387,12 @@
       },
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
-
     revealElements.forEach((el) => revealObserver.observe(el));
 
-    if (slideshowTrack && slideshowPrev && slideshowNext) {
-      const originalSlides = Array.from(slideshowTrack.querySelectorAll(".slideshow-slide"));
-      if (originalSlides.length > 1) {
-        const featuredVideos = Array.isArray(data.featuredVideos) ? data.featuredVideos : [];
 
-        const updateCaption = (trackIndex) => {
-          if (!slideshowCaptionTitle || !slideshowCaptionDescription) return;
-          const realIndex = ((trackIndex - 1) % originalSlides.length + originalSlides.length) % originalSlides.length;
-          const item = featuredVideos[realIndex];
-          slideshowCaptionTitle.textContent = item?.title || "Highlighted Project";
-          slideshowCaptionDescription.textContent = item?.description || "";
-        };
-
-        const firstClone = originalSlides[0].cloneNode(true);
-        const lastClone = originalSlides[originalSlides.length - 1].cloneNode(true);
-        firstClone.dataset.clone = "first";
-        lastClone.dataset.clone = "last";
-        slideshowTrack.appendChild(firstClone);
-        slideshowTrack.prepend(lastClone);
-
-        let currentIndex = 1;
-        let isAnimating = false;
-
-        const jumpTo = (index, animated = true) => {
-          slideshowTrack.style.transition = animated ? "transform 420ms ease" : "none";
-          slideshowTrack.style.transform = `translateX(-${index * 100}%)`;
-          updateCaption(index);
-        };
-
-        jumpTo(currentIndex, false);
-        requestAnimationFrame(() => {
-          slideshowTrack.style.transition = "transform 420ms ease";
-        });
-
-        const move = (direction) => {
-          if (isAnimating) return;
-          isAnimating = true;
-          currentIndex += direction;
-          jumpTo(currentIndex, true);
-        };
-
-        slideshowPrev.addEventListener("click", () => move(-1));
-        slideshowNext.addEventListener("click", () => move(1));
-
-        slideshowTrack.addEventListener("transitionend", () => {
-          const totalWithClones = originalSlides.length + 2;
-          if (currentIndex === 0) {
-            currentIndex = originalSlides.length;
-            jumpTo(currentIndex, false);
-          } else if (currentIndex === totalWithClones - 1) {
-            currentIndex = 1;
-            jumpTo(currentIndex, false);
-          }
-          isAnimating = false;
-        });
-      }
-    }
-
-    const bindAccordionInteractions = () => {
-      const accordionItems = document.querySelectorAll(".accordion-item");
-      accordionItems.forEach((item) => {
-        if (item.dataset.bound === "true") return;
-        const trigger = item.querySelector(".accordion-trigger");
-        const panel = item.querySelector(".accordion-panel");
-        if (!trigger || !panel) return;
-
-        if (item.classList.contains("is-open")) {
-          panel.style.maxHeight = `${panel.scrollHeight}px`;
-        }
-
-        trigger.addEventListener("click", () => {
-          const willOpen = !item.classList.contains("is-open");
-          item.classList.toggle("is-open", willOpen);
-          trigger.setAttribute("aria-expanded", String(willOpen));
-          panel.style.maxHeight = willOpen ? `${panel.scrollHeight}px` : "0px";
-        });
-
-        item.dataset.bound = "true";
-      });
-    };
-
-    bindAccordionInteractions();
-
-    window.addEventListener("resize", () => {
-      document.querySelectorAll(".accordion-item.is-open .accordion-panel").forEach((panel) => {
-        panel.style.maxHeight = `${panel.scrollHeight}px`;
-      });
-    });
-
-const parallaxStage = document.querySelector("#parallax-stage");
-let parallaxCards = [];
-const buildParallaxVideos = () => {
-  if (!parallaxStage) return;
-
-  const videos = data.allVideos || [];
-  const n = videos.length;
-
-  // ===============================
-  // FIXED VISIBLE SET SIZE
-  // ===============================
-  const visibleCount = 10;
-
-  const laneHeight = 30;
-  const xThreshold = 30;
-
-  const lanes = [];
-
-  parallaxStage.innerHTML = Array.from({ length: visibleCount })
-    .map((_, i) => {
-      // ===============================
-      // REPEAT VIDEOS (CYCLING)
-      // ===============================
-      const src = videos[i % n];
-
-      const depth =
-        i % 3 === 0 ? "parallax-front" :
-        i % 3 === 1 ? "parallax-mid" :
-                      "parallax-back";
-
-      const isVisible = true;
-
-      const x = 39 + ((i / visibleCount) - 0.5) * 80;
-
-      // ===============================
-      // COLLISION-FREE LANE ASSIGNMENT
-      // ===============================
-      let laneIndex = 0;
-
-      for (; laneIndex < lanes.length; laneIndex++) {
-        const lane = lanes[laneIndex];
-
-        const conflict = lane.some(prevX =>
-          Math.abs(prevX - x) < xThreshold
-        );
-
-        if (!conflict) break;
-      }
-
-      if (!lanes[laneIndex]) lanes[laneIndex] = [];
-      lanes[laneIndex].push(x);
-
-      const baseY =
-      laneIndex * laneHeight +
-      (Math.sin(i * 1.7) * 12) +   // smooth variation per card
-      (Math.random() - 0.5) * 5;   // small local scatter
-
-      return `
-        <div class="parallax-card ${depth}"
-          data-x="${x}"
-          data-basey="${baseY}">
-          <video autoplay muted loop playsinline>
-            <source src="${src}" type="video/mp4" />
-          </video>
-        </div>
-      `;
-    })
-    .join("");
-
-  parallaxCards = Array.from(document.querySelectorAll(".parallax-card"));
-};
-
-buildParallaxVideos();
-
-
-// ===============================
-// SCROLL STATE (SAFE)
-// ===============================
-
-let lastScrollY = window.scrollY;
-let scrollOffset = 0;
-
-window.addEventListener("scroll", () => {
-  const currentY = window.scrollY;
-  const delta = currentY - lastScrollY;
-
-  // apply opposite-direction movement
-  scrollOffset += -delta * 0.01;
-
-  lastScrollY = currentY;
-});
-
-
-// ===============================
-// RENDER LOOP
-// ===============================
-
-const updateParallax = () => {
-  if (!parallaxStage) return;
-  const rect = parallaxStage.getBoundingClientRect();
-  const W = rect.width;
-  const H = rect.height;
-
-  const idleGravity = 0.01;
-
-  // slow drift when not scrolling
-  scrollOffset += idleGravity;
-
-  parallaxCards.forEach((card) => {
-    const x = parseFloat(card.dataset.x);
-    const baseY = parseFloat(card.dataset.basey);
-
-    const depthSpeed =
-      card.classList.contains("parallax-front") ? 0.6 :
-      card.classList.contains("parallax-mid") ? 1.0 :
-      1.6;
-
-    const finalY = baseY + scrollOffset * depthSpeed;
-
-    const scale =
-      card.classList.contains("parallax-front") ? 1.05 :
-      card.classList.contains("parallax-mid") ? 0.98 :
-      0.92;
-
-    const xPx = (x / 100) * W;
-    const yPx = (finalY / 100) * H;
-
-    card.style.transform = `
-      translate3d(${xPx}px, ${yPx}px, 0)
-      scale(${scale})
-    `;
-  });
-
-  requestAnimationFrame(updateParallax);
-};
-
-requestAnimationFrame(updateParallax);
   </script>
 
+  <!-- Smooth Scroll -->
   <script>
     (function () {
       document.querySelectorAll(".btn.primary, .btn.ghost").forEach(function (btn) {
@@ -686,5 +409,6 @@ requestAnimationFrame(updateParallax);
       });
     })();
   </script>
+
 </body>
 </html>
