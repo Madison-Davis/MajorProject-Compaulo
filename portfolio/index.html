@@ -111,6 +111,8 @@
       <div style="position:absolute;bottom:0;right:0;width:160px;height:70px;background:black;z-index:12;pointer-events:none;"></div>
     </section>
 
+    <div aria-hidden="true" style="height:250px;background:#000;"></div>
+
     <!-- OVERVIEW -->
     <section id="overview" class="section reveal">
       <div class="container">
@@ -139,19 +141,33 @@
       </div>
     </section>
 
+    <div aria-hidden="true" style="height:250px;background:#000;"></div>
+
     <!-- IPHONE SHOWCASE -->
     <section
       id="iphone-showcase"
-      style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
+      style="position:relative;width:100%;height:80vh;overflow:hidden;">
+      <!--Spline viewerr -->
       <spline-viewer
         id="iphone-spline"
         data-scene-url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode"
         aria-label="Interactive 3D iPhone showcase"
-        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.35s ease;"
+        style="position:absolute;top:0;left:50%;width:70vw;height:100%;opacity:0;transition:opacity 1s ease-in-out;transform:translateX(-50%);clip-path:inset(0 0 7% 0);"
       ></spline-viewer>
-      <div
-        style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"
-      ></div>
+      <!-- Rounded-rectangle vignette overlay -->
+      <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none"
+     style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:12;">
+        <defs>
+          <filter id="iphone-soft-edges" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6 6" />
+          </filter>
+          <mask id="iphone-rounded-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+            <rect width="200" height="100" fill="white" />
+            <rect x="15" y="4" width="65" height="75" rx="20" fill="black" filter="url(#iphone-soft-edges)" />
+          </mask>
+        </defs>
+        <rect width="100" height="100" fill="black" mask="url(#iphone-rounded-mask)" />
+      </svg>
     </section>
     <script>
       (function () {
@@ -168,20 +184,19 @@
           started = true;
 
           viewer.addEventListener(
-            "load",
+            "load-complete",
             function () {
-              viewer.style.opacity = "1";
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  viewer.style.opacity = "1";
+                });
+              });
             },
             { once: true }
           );
 
           // Start downloading the scene.
           viewer.setAttribute("url", viewer.dataset.sceneUrl);
-
-          // Fallback in case the viewer does not emit a load event.
-          window.setTimeout(function () {
-            viewer.style.opacity = "1";
-          }, 1200);
 
           // The scene only needs to be initialized once.
           observer.disconnect();
@@ -214,6 +229,8 @@
       </div>
     </section>
 
+    <div aria-hidden="true" style="height:200px;background:#000;"></div>
+
     <!-- LINKS -->
     <span id="links" style="display:block;height:0;"></span>
     <section id="feature-split" class="section reveal">
@@ -242,6 +259,8 @@
         </div>
       </div>
     </section>
+
+    
 
   </main>
 
