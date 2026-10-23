@@ -23,6 +23,11 @@
 
   <!-- External Scripts -->
   <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
+
+  <!-- Links for Hero Spline -->
+  <link rel="preconnect" href="https://prod.spline.design" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.107/build/spline-viewer.js"></script>
 </head>
 
 <!--------------------------------------------
@@ -51,41 +56,44 @@
 
     <!-- HERO -->
     <section id="home" class="hero section reveal" style="position:relative;overflow:hidden;display:flex;flex-direction:column;">
-      <spline-viewer id="hero-spline" url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;"></spline-viewer>
-      <script>
-        window.addEventListener("wheel", function(e) {
-          var spline = document.getElementById("hero-spline");
-          if (!spline) return;
-          var r = spline.getBoundingClientRect();
-          if (e.clientX >= r.left && e.clientX <= r.right &&
-              e.clientY >= r.top  && e.clientY <= r.bottom) {
-            window.scrollBy({ top: e.deltaY, behavior: "auto" });
-          }
-        }, { capture: true, passive: true });
+      <!-- Hero Spline -->
+      <spline-viewer
+        id="hero-spline"
+        url="https://prod.spline.design/XHG-SQPtiFSH8sUM/scene.splinecode"
+        events-target="global"
+        loading="eager"
+        style="
+          position:absolute;
+          inset:0;
+          width:100%;
+          height:100%;
+          opacity:0;
+          transform: scale(0.9);
+          transform-origin:center center;
+          transition:opacity 1s ease-in-out;">
+      </spline-viewer>
 
-        (function() {
-          var startY = 0;
-          window.addEventListener("touchstart", function(e) {
-            startY = e.touches[0].clientY;
-          }, { capture: true, passive: true });
-          window.addEventListener("touchmove", function(e) {
-            var spline = document.getElementById("hero-spline");
-            if (!spline) return;
-            var r = spline.getBoundingClientRect();
-            var t = e.touches[0];
-            if (t.clientX >= r.left && t.clientX <= r.right &&
-                t.clientY >= r.top  && t.clientY <= r.bottom) {
-              window.scrollBy({ top: startY - t.clientY, behavior: "auto" });
-              startY = t.clientY;
-            }
-          }, { capture: true, passive: true });
+      <!-- Fade in Hero Spline after it finishes loading -->
+      <script>
+        (function () {
+          const spline = document.getElementById("hero-spline");
+          if (!spline) return;
+
+          spline.addEventListener(
+            "load-complete",
+            function () {
+              spline.style.opacity = "1";
+            },
+            { once: true }
+          );
         })();
       </script>
+
       <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center, transparent 40%, #000 85%), linear-gradient(to bottom, #000 0%, transparent 18%, transparent 72%, #000 100%);"></div>
 
       <div class="container hero-grid" style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:stretch;align-items:center;pointer-events:none;">
         <div class="reveal hero-copy" style="display:flex;flex-direction:column;justify-content:space-between;flex:1;width:100%;pointer-events:none;">
-          <div class="hero-top" style="text-align:center;pointer-events:auto;">
+          <div class="hero-top" style="text-align:center;pointer-events:auto;transform:translateY(-100px);">
             <p class="kicker">HELLO!</p>
             <h1>I'M MADISON DAVIS</h1>
             <p class="lead">
@@ -93,7 +101,7 @@
               and technical skill intersect.
             </p>
           </div>
-          <div class="hero-actions" style="pointer-events:auto;">
+          <div class="hero-actions" style="pointer-events:auto;transform:translateY(-25px);">
             <a class="btn primary" href="#projects">View My Work</a>
             <a class="btn ghost" href="#links">Connect With Me</a>
           </div>
@@ -132,57 +140,66 @@
     </section>
 
     <!-- IPHONE SHOWCASE -->
-    <section id="iphone-showcase" style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
-      <spline-viewer id="iphone-spline" url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;"></spline-viewer>
-      <div style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"></div>
+    <section
+      id="iphone-showcase"
+      style="position:relative;width:100%;height:80vh;margin-top:100px;overflow:hidden;">
+      <spline-viewer
+        id="iphone-spline"
+        data-scene-url="https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode"
+        aria-label="Interactive 3D iPhone showcase"
+        style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.35s ease;"
+      ></spline-viewer>
+      <div
+        style="position:absolute;inset:0;pointer-events:none;z-index:12;background:radial-gradient(ellipse at center, transparent 45%, #000 75%);"
+      ></div>
     </section>
     <script>
-      (function() {
-        var splineUrl = "https://prod.spline.design/0Fep6PkWykTxo83O/scene.splinecode";
-        var showcase = document.getElementById("iphone-showcase");
-        var isScrollingDown = true;
-        var lastScrollY = window.scrollY;
-        window.addEventListener("scroll", function() {
-          var y = window.scrollY;
-          isScrollingDown = y > lastScrollY;
-          lastScrollY = y;
-        }, { passive: true });
+      (function () {
+        const showcase = document.getElementById("iphone-showcase");
+        const viewer = document.getElementById("iphone-spline");
 
-        var observer = new IntersectionObserver(function(entries) {
-          entries.forEach(function(entry) {
-            var viewer = document.getElementById("iphone-spline");
-            if (entry.isIntersecting) {
-              if (isScrollingDown) {
-                // restart + fade in
-                var fresh = document.createElement("spline-viewer");
-                fresh.id = "iphone-spline";
-                fresh.setAttribute("url", splineUrl);
-                fresh.style.cssText = "position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 0.8s ease;";
-                if (viewer) viewer.replaceWith(fresh);
-                var faded = false;
-                var doFadeIn = function() {
-                  if (faded) return;
-                  faded = true;
-                  fresh.style.opacity = "1";
-                };
-                fresh.addEventListener("load", doFadeIn, { once: true });
-                setTimeout(doFadeIn, 200);
-              } else {
-                // scrolling up — just keep it visible
-                if (viewer) {
-                  viewer.style.transition = "opacity 0.8s ease";
-                  viewer.style.opacity = "1";
-                }
-              }
-            } else {
-              // only hide when scrolling down past it
-              if (isScrollingDown && viewer) {
-                viewer.style.transition = "none";
-                viewer.style.opacity = "0";
-              }
+        if (!showcase || !viewer) return;
+
+        let started = false;
+        let observer;
+
+        function loadShowcase() {
+          if (started) return;
+          started = true;
+
+          viewer.addEventListener(
+            "load",
+            function () {
+              viewer.style.opacity = "1";
+            },
+            { once: true }
+          );
+
+          // Start downloading the scene.
+          viewer.setAttribute("url", viewer.dataset.sceneUrl);
+
+          // Fallback in case the viewer does not emit a load event.
+          window.setTimeout(function () {
+            viewer.style.opacity = "1";
+          }, 1200);
+
+          // The scene only needs to be initialized once.
+          observer.disconnect();
+        }
+
+        observer = new IntersectionObserver(
+          function (entries) {
+            if (entries.some((entry) => entry.isIntersecting)) {
+              loadShowcase();
             }
-          });
-        }, { threshold: 0.1 });
+          },
+          {
+            // Start loading before the user reaches the section.
+            rootMargin: "1400px 0px 1400px 0px",
+            threshold: 0
+          }
+        );
+
         observer.observe(showcase);
       })();
     </script>
