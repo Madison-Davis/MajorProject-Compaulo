@@ -399,7 +399,7 @@
 
     // ── Legend card — fixed top-left ──────────────────────────────────────────
     var legendEl = document.createElement('div');
-    legendEl.style.cssText = 'position:absolute;top:2rem;left:2rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);padding:1rem 1.1rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
+    legendEl.style.cssText = 'position:absolute;top:2rem;left:2rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
 
     // Spin toggle row
     var spinRow = document.createElement('div');
@@ -437,7 +437,7 @@
     var dropWrap = document.createElement('div');
     dropWrap.style.cssText = 'position:relative;';
     var dropTrigger = document.createElement('button');
-    dropTrigger.style.cssText = 'width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);padding:0.38rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.7rem;color:#fff;';
+    dropTrigger.style.cssText = 'width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:0.38rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.7rem;color:#fff;';
     var trigText = document.createElement('span');
     trigText.textContent = 'All Topics';
     var trigArrow = document.createElement('span');
@@ -448,7 +448,7 @@
 
     // Dropdown panel
     var dropPanel = document.createElement('div');
-    dropPanel.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#0f0f0f;border:1px solid rgba(255,255,255,0.12);border-top:none;z-index:20;max-height:200px;overflow-y:auto;';
+    dropPanel.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#0f0f0f;border:1px solid rgba(255,255,255,0.12);border-top:none;border-radius:0 0 20px 20px;overflow-y:auto;overflow-x:hidden;z-index:20;max-height:200px;';
 
     function updateTrigText() {
       trigText.textContent = activeThemes.size === THEMES.length ? 'All Topics'
@@ -535,7 +535,7 @@
 
     // ── Popup card — absolute middle-left of globe ────────────────────────────
     var popupEl = document.createElement('div');
-    popupEl.style.cssText = 'position:absolute;top:35%;left:2rem;transform:translateY(-50%);width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);padding:1.5rem 1.1rem 1.1rem;z-index:10;opacity:0;pointer-events:none;transition:opacity 0.2s ease;';
+    popupEl.style.cssText = 'position:absolute;top:35%;left:2rem;transform:translateY(-50%);width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1.5rem 1.1rem 1.1rem;z-index:10;opacity:0;pointer-events:none;transition:opacity 0.2s ease;';
     var popupClose = document.createElement('button');
     popupClose.textContent = '×';
     popupClose.style.cssText = 'position:absolute;top:0.6rem;right:0.7rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.1rem;cursor:pointer;line-height:1;padding:0;font-family:sans-serif;';
@@ -549,7 +549,7 @@
     var popupLink = document.createElement('a');
     popupLink.textContent = 'Learn More ↗';
     popupLink.target = '_blank';
-    popupLink.style.cssText = 'font-family:Manrope,sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.25);padding:0.38rem 0.8rem;display:inline-block;';
+    popupLink.style.cssText = 'font-family:Manrope,sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:0.38rem 0.8rem;display:inline-block;';
     popupEl.appendChild(popupClose);
     popupEl.appendChild(popupTheme);
     popupEl.appendChild(popupTitle);
