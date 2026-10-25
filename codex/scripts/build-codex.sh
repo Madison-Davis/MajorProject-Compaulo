@@ -4,118 +4,300 @@ set -e
 CODEX="$(cd "$(dirname "$0")/.." && pwd)"
 GIT_ROOT="$(cd "$CODEX/.." && pwd)"
 SUBMODULE="$CODEX/codex-content"
+SOURCE_DIR="$SUBMODULE/Learn/Learn - Compaulo"
+TEMPLATE="$CODEX/pages/template.html"
+INDEX="$CODEX/index.html"
 
-echo "Updating submodule..."
-git -C "$GIT_ROOT" submodule update --remote codex/codex-content
+# Uncomment this line if you want the script to pull the latest submodule changes.
+# git -C "$GIT_ROOT" submodule update --remote codex/codex-content
 
-echo ""
-echo "Building files from Learn/Learn - Compaulo..."
+if [[ ! -d "$SOURCE_DIR" ]]; then
+  echo "ERROR: Source folder not found: $SOURCE_DIR"
+  exit 1
+fi
 
-while IFS= read -r FILE; do
-BASENAME="$(basename "$FILE" .md)"
-OUTNAME="$(echo "$BASENAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').html"
-OUTPATH="$CODEX/pages/$OUTNAME"
+if [[ ! -f "$TEMPLATE" || ! -f "$INDEX" ]]; then
+  echo "ERROR: Could not find pages/template.html or index.html."
+  exit 1
+fi
 
-python3 - "$FILE" "$CODEX/pages/template.html" "$OUTPATH" << 'PYEOF'
-import sys, re, os
+echo "Building HTML pages..."
 
-md_file, template_file, out_file = sys.argv[1], sys.argv[2], sys.argv[3]
+python3 - "$SOURCE_DIR" "$TEMPLATE" "$CODEX/pages" <<'PYEOF'
+import html
+import re
+import sys
+from pathlib import Path
 
-# Read markdown and strip frontmatter
-with open(md_file) as f:
-    raw = f.read()
+source_dir = Path(sys.argv[1])
+template_path = Path(sys.argv[2])
+output_dir = Path(sys.argv[3])
 
-body = raw
-if raw.startswith('---'):
-    end = raw.find('\n---', 3)
-    if end != -1:
-        body = raw[end + 4:].lstrip()
+def slugify(name):
+    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
 
-# Parse into chapters
-chapters = []
-cur_chapter = None
-cur_section = None
-pending = []
+def strip_frontmatter(raw):
+    match = re.match(r'\A---\s*\n.*?\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
+    return raw[match.end():] if match else raw
 
-def flush():
-    text = ' '.join(l.strip() for l in pending if l.strip())
-    if text and cur_section is not None:
-        cur_section['paragraphs'].append(text)
-    pending.clear()
+def clean_line(line):
+    line = line.strip()
+    if line.startswith('**') and line.endswith('**') and len(line) >= 4:
+        line = line[2:-2].strip()
+    return line
 
-for line in body.splitlines():
-    if line.startswith('#### '):
-        flush()
-        cur_section = {'subtitle': None, 'paragraphs': []}
-        cur_chapter = {
-            'title': line[5:].strip(),
-            'sections': [cur_section]
-        }
-        chapters.append(cur_chapter)
+def parse_chapters(body):
+    chapters = []
+    chapter = None
+    section = None
+    pending = []
 
-    elif line.startswith('##### '):
-        flush()
-        cur_section = {
-            'subtitle': line[6:].strip(),
-            'paragraphs': []
-        }
-        if cur_chapter:
-            cur_chapter['sections'].append(cur_section)
+    def flush():
+        nonlocal pending
+        text = ' '.join(x.strip() for x in pending if x.strip())
+        if text and section is not None:
+            section['paragraphs'].append(text)
+        pending = []
 
-    elif line.strip() == '' or line.strip() == '---' or line.strip() == '## <wbr>':
-        flush()
+    for original in body.splitlines():
+        line = clean_line(original)
 
-    elif cur_chapter:
-        pending.append(line)
+        # Four hashes = chapter; five hashes = subsection.
+        if line.startswith('##### '):
+            flush()
+            section = {
+                'subtitle': line[6:].strip(),
+                'paragraphs': []
+            }
+            if chapter is not None:
+                chapter['sections'].append(section)
 
-flush()
+        elif line.startswith('#### '):
+            flush()
+            section = {'subtitle': None, 'paragraphs': []}
+            chapter = {
+                'title': line[5:].strip(),
+                'sections': [section]
+            }
+            chapters.append(chapter)
 
-title = os.path.basename(md_file).replace('.md', '').upper()
+        elif (
+            not line
+            or line == '---'
+            or re.fullmatch(r'##\s*<wbr\s*/?>', line, re.IGNORECASE)
+        ):
+            flush()
 
-# Build TOC buttons
-toc = ''
-for i, ch in enumerate(chapters):
-    active = ' is-active' if i == 0 else ''
-    toc += f'        <button class="toc-link{active}" data-target="ch-{i+1}">\n'
-    toc += f'          <span class="toc-num">{i+1}</span>\n'
-    toc += f'          <span>{ch["title"]}</span>\n'
-    toc += f'        </button>\n'
+        elif chapter is not None:
+            pending.append(line)
 
-# Build chapter divs
-ch_divs = ''
-for i, ch in enumerate(chapters):
-    active = ' is-active' if i == 0 else ''
-    body_html = ''
-    for sec in ch['sections']:
-        if sec['subtitle']:
-            body_html += f'\n          <h3 class="tpl-chapter-subtitle">{sec["subtitle"]}</h3>'
-        for p in sec['paragraphs']:
-            body_html += f'\n          <p>{p}</p>'
-    ch_divs += f'      <div class="tpl-chapter{active}" id="ch-{i+1}">\n'
-    ch_divs += f'        <div class="tpl-chapter-header">\n'
-    ch_divs += f'          <p class="kicker">CHAPTER {i+1}</p>\n'
-    ch_divs += f'          <h2 class="tpl-chapter-title">{ch["title"]}</h2>\n'
-    ch_divs += f'        </div>\n'
-    ch_divs += f'        <div class="tpl-chapter-body">{body_html}\n'
-    ch_divs += f'        </div>\n'
-    ch_divs += f'      </div>\n\n'
+    flush()
+    return chapters
 
-# Read template and substitute
-with open(template_file) as f:
-    html = f.read()
+template = template_path.read_text(encoding='utf-8')
+output_dir.mkdir(parents=True, exist_ok=True)
 
-html = re.sub(r'<title>[^<]*</title>', f'<title>{title} — Learn a Bit</title>', html)
-html = re.sub(r'<h3 class="tpl-content-title">[^<]*</h3>', f'<h3 class="tpl-content-title">{title}</h3>', html)
-html = re.sub(r'(<nav>).*?(</nav>)', f'\\1\n{toc}      \\2', html, flags=re.DOTALL)
+files = sorted(source_dir.rglob('*.md'))
 
-start = html.find('<div class="tpl-chapter')
-end = html.rfind('</main>')
-if start != -1 and end != -1:
-    html = html[:start] + ch_divs + '\n    ' + html[end:]
+for md_file in files:
+    raw = md_file.read_text(encoding='utf-8')
+    body = strip_frontmatter(raw)
+    chapters = parse_chapters(body)
 
-with open(out_file, 'w') as f:
-    f.write(html)
+    basename = md_file.stem
+    page_title = basename.upper()
+    output_name = slugify(basename) + '.html'
+
+    toc = ''
+    chapter_html = ''
+
+    for i, ch in enumerate(chapters):
+        active = ' is-active' if i == 0 else ''
+        toc += (
+            f'        <button class="toc-link{active}" '
+            f'data-target="ch-{i+1}">\n'
+            f'          <span class="toc-num">{i+1}</span>\n'
+            f'          <span>{html.escape(ch["title"])}</span>\n'
+            f'        </button>\n'
+        )
+
+        body_html = ''
+        for sec in ch['sections']:
+            if sec['subtitle']:
+                body_html += (
+                    '\n          <h3 class="tpl-chapter-subtitle">'
+                    + html.escape(sec['subtitle'])
+                    + '</h3>'
+                )
+
+            for paragraph in sec['paragraphs']:
+                body_html += (
+                    '\n          <p>'
+                    + html.escape(paragraph)
+                    + '</p>'
+                )
+
+        chapter_html += (
+            f'      <div class="tpl-chapter{active}" id="ch-{i+1}">\n'
+            f'        <div class="tpl-chapter-header">\n'
+            f'          <p class="kicker">CHAPTER {i+1}</p>\n'
+            f'          <h2 class="tpl-chapter-title">'
+            f'{html.escape(ch["title"])}</h2>\n'
+            f'        </div>\n'
+            f'        <div class="tpl-chapter-body">{body_html}\n'
+            f'        </div>\n'
+            f'      </div>\n\n'
+        )
+
+    page = template
+    page = re.sub(
+        r'<title>[^<]*</title>',
+        f'<title>{html.escape(page_title)} — Learn a Bit</title>',
+        page,
+        count=1
+    )
+    page = re.sub(
+        r'(<h3 class="tpl-content-title">)[^<]*(</h3>)',
+        lambda m: m.group(1) + html.escape(page_title) + m.group(2),
+        page,
+        count=1
+    )
+    page = re.sub(
+        r'(<nav>).*?(</nav>)',
+        lambda m: m.group(1) + '\n' + toc + '      ' + m.group(2),
+        page,
+        count=1,
+        flags=re.DOTALL
+    )
+
+    start = page.find('<div class="tpl-chapter')
+    end = page.rfind('</main>')
+
+    if start != -1 and end != -1 and start < end:
+        page = page[:start] + chapter_html + '\n    ' + page[end:]
+
+    (output_dir / output_name).write_text(page, encoding='utf-8')
+    print(f'  {md_file.name} -> {output_name}')
+
+print(f'Generated {len(files)} HTML page(s).')
 PYEOF
 
-echo "  $(basename "$FILE") → $OUTNAME"
-done < <(find "$SUBMODULE/Learn/Learn - Compaulo" -name "*.md")
+echo "Generating category cards..."
+
+python3 - "$SOURCE_DIR" "$INDEX" <<'PYEOF'
+import html
+import re
+import sys
+from pathlib import Path
+
+source_dir = Path(sys.argv[1])
+index_path = Path(sys.argv[2])
+
+categories = ['Tech', 'Economics', 'Business']
+
+def slugify(name):
+    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+
+def get_frontmatter(raw):
+    match = re.match(r'\A---\s*\n(.*?)\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
+    return match.group(1) if match else ''
+
+def get_tags(frontmatter):
+    tags = set()
+    in_tags = False
+
+    for line in frontmatter.splitlines():
+        if re.match(r'^tags\s*:', line, re.IGNORECASE):
+            in_tags = True
+            value = line.split(':', 1)[1].strip()
+
+            if value:
+                value = value.strip('[]')
+                tags.update(
+                    item.strip().strip('"\'').lower()
+                    for item in value.split(',')
+                    if item.strip()
+                )
+            continue
+
+        if in_tags:
+            if re.match(r'^\s*-\s+', line):
+                tag = re.sub(r'^\s*-\s+', '', line).strip().strip('"\'')
+                if tag:
+                    tags.add(tag.lower())
+            elif line.strip():
+                in_tags = False
+
+    return tags
+
+entries = {category: [] for category in categories}
+
+for md_file in sorted(source_dir.rglob('*.md'), key=lambda p: p.name.lower()):
+    raw = md_file.read_text(encoding='utf-8')
+    tags = get_tags(get_frontmatter(raw))
+
+    title = re.sub(
+        r'^Compaulo\s*-\s*',
+        '',
+        md_file.stem,
+        flags=re.IGNORECASE
+    ).strip()
+
+    output_name = slugify(md_file.stem) + '.html'
+    link = f'pages/{output_name}'
+
+    for category in categories:
+        if category.lower() in tags:
+            card = (
+                f'<a class="course-card" href="{html.escape(link, quote=True)}">'
+                f'<h3>{html.escape(title)}</h3>'
+                f'</a>'
+            )
+            entries[category].append((title.lower(), card))
+
+index = index_path.read_text(encoding='utf-8')
+
+for category in categories:
+    start_marker = f'<!-- AUTO-GENERATED: {category.upper()} START -->'
+    end_marker = f'<!-- AUTO-GENERATED: {category.upper()} END -->'
+
+    start = index.find(start_marker)
+    end = index.find(end_marker)
+
+    if start == -1 or end == -1 or end < start:
+        raise SystemExit(
+            f'Missing markers for {category}. '
+            f'Add the START and END comments inside its course-grid.'
+        )
+
+    cards = '\n'.join(
+        '                  ' + card
+        for _, card in sorted(entries[category])
+    )
+
+    if not cards:
+        cards = (
+            f'<p class="course-empty">No {category} pages yet.</p>'
+        )
+
+    replacement = (
+        start_marker + '\n'
+        + cards + '\n'
+        + '                  ' + end_marker
+    )
+
+    index = (
+        index[:start]
+        + replacement
+        + index[end + len(end_marker):]
+    )
+
+index_path.write_text(index, encoding='utf-8')
+
+for category in categories:
+    print(f'  {category}: {len(entries[category])} page(s)')
+
+print('Updated index.html.')
+PYEOF
+
+echo "Build complete."
