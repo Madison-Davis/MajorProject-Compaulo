@@ -555,7 +555,7 @@
 
     // ── Popup card — absolute middle-left of globe ────────────────────────────
     var popupEl = document.createElement('div');
-    popupEl.style.cssText = 'position:absolute;top:50%;left:6rem;transform:translateY(-40%);width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1.5rem 1.1rem 1.1rem;z-index:10;opacity:0;pointer-events:none;transition:opacity 0.2s ease;';
+    popupEl.style.cssText = 'position:absolute;top:50%;left:4rem;transform:translateY(-35%);width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1.5rem 1.1rem 1.1rem;z-index:10;opacity:0;pointer-events:none;transition:opacity 0.2s ease;';
     var popupClose = document.createElement('button');
     popupClose.textContent = '×';
     popupClose.style.cssText = 'position:absolute;top:0.6rem;right:0.7rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.1rem;cursor:pointer;line-height:1;padding:0;font-family:sans-serif;';
