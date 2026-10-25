@@ -33,6 +33,10 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.CODEX_TOKEN }}
+      - name: Update Codex content
+        run: |
+          git -C codex/codex-content fetch origin main
+          git -C codex/codex-content checkout origin/main
       - name: Debug submodule
         run: |
           echo "Submodule status:"
