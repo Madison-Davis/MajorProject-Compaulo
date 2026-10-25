@@ -37,16 +37,6 @@ jobs:
         run: |
           git -C codex/codex-content fetch origin main
           git -C codex/codex-content checkout origin/main
-      - name: Debug submodule
-        run: |
-          echo "Submodule status:"
-          git submodule status
-          echo "Contents of codex:"
-          ls -la codex/
-          echo "Contents of codex-content:"
-          ls -la codex/codex-content/
-          echo "Learn directory:"
-          ls -la "codex/codex-content/Learn/"
       - name: Build Codex
         run: bash codex/scripts/build-codex.sh
       - name: Setup Pages
