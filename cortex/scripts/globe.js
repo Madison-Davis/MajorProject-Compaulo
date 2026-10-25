@@ -370,6 +370,7 @@
     var container = document.getElementById('globe-wrap');
     if (!container) return;
     var globeSection = document.getElementById('globe-section');
+    var isFullscreenView = window.location.hash === '#globe-fullscreen';
 
     var W = container.clientWidth;
     var H = container.clientHeight || W;
@@ -406,7 +407,19 @@
 
     // ── Legend card — fixed top-left ──────────────────────────────────────────
     var legendEl = document.createElement('div');
-    legendEl.style.cssText = 'position:absolute;top:15rem;left:6rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:11;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
+    legendEl.style.cssText = 'position:absolute;top:15rem;left:4rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:1;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
+
+    // Open-in-full-screen button
+    var fullscreenBtn = document.createElement('button');
+    fullscreenBtn.textContent = 'OPEN IN FULL SCREEN';
+    fullscreenBtn.style.cssText = 'width:100%;margin-bottom:0.85rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:0.42rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.08em;color:#fff;text-transform:uppercase;transition:background 0.2s;';
+    fullscreenBtn.addEventListener('mouseover', function () { fullscreenBtn.style.background = 'rgba(255,255,255,0.16)'; });
+    fullscreenBtn.addEventListener('mouseout',  function () { fullscreenBtn.style.background = 'rgba(255,255,255,0.08)'; });
+    fullscreenBtn.addEventListener('click', function () {
+      var url = window.location.href.split('#')[0] + '#globe-fullscreen';
+      window.open(url, '_blank');
+    });
+    legendEl.appendChild(fullscreenBtn);
 
     // Spin toggle row
     var spinRow = document.createElement('div');
@@ -564,6 +577,62 @@
     popupEl.appendChild(popupLink);
     globeSection.appendChild(popupEl);
 
+    // ── Full-screen view: hide everything else on the page, showing only
+    // the globe and the filter-by-topic control ───────────────────────────
+    if (isFullscreenView) {
+      // Walk up from #globe-section to <body>, hiding every sibling along
+      // the way so nothing else on the page renders.
+      (function isolate(el) {
+        var parent = el.parentElement;
+        if (!parent || parent === document.documentElement) return;
+        Array.prototype.forEach.call(parent.children, function (sibling) {
+          if (sibling !== el) sibling.style.display = 'none';
+        });
+        isolate(parent);
+      })(globeSection);
+
+      // Minimal header: same site-header styling, title only, no nav links
+      var fsHeader = document.createElement('header');
+      fsHeader.className = 'site-header';
+      var fsHeaderInner = document.createElement('div');
+      fsHeaderInner.className = 'container nav-wrap';
+      fsHeaderInner.style.justifyContent = 'center';
+      var fsTitle = document.createElement('span');
+      fsTitle.className = 'brand';
+      fsTitle.textContent = 'COMPAULO';
+      fsHeaderInner.appendChild(fsTitle);
+      fsHeader.appendChild(fsHeaderInner);
+      document.body.insertBefore(fsHeader, document.body.firstChild);
+
+      document.documentElement.style.height = '100%';
+      document.body.style.margin = '0';
+      document.body.style.height = '100%';
+      document.body.style.background = '#000';
+      document.body.style.display = 'flex';
+      document.body.style.flexDirection = 'column';
+      document.body.style.alignItems = 'stretch';
+      document.body.style.justifyContent = 'flex-start';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.body.style.width = '100vw';
+
+      globeSection.style.minHeight = '0';
+      globeSection.style.width = '100vw';
+      globeSection.style.flex = '1 1 auto';
+      globeSection.style.display = 'flex';
+      globeSection.style.alignItems = 'flex-start';
+      globeSection.style.justifyContent = 'center';
+      globeSection.style.paddingTop = '27vh';
+
+      container.style.width = 'min(92vw, 92vh)';
+      container.style.height = 'min(92vw, 92vh)';
+      legendEl.style.top = '20rem';
+
+      fullscreenBtn.style.display = 'none';
+      spinRow.style.display = 'none';
+      popupEl.style.display = 'none';
+    }
+
     function showPopup(p) {
       if (!globeIsVisible) return;
       currentPopupData = p;
@@ -582,6 +651,12 @@
 
     // Legend + popup both fade with scroll
     function updateSideVisibility() {
+      if (isFullscreenView) {
+        globeIsVisible = true;
+        legendEl.style.opacity = '1';
+        legendEl.style.pointerEvents = '';
+        return;
+      }
       var r = container.getBoundingClientRect();
       var vh = window.innerHeight;
       var visiblePx = Math.max(Math.min(r.bottom, vh) - Math.max(r.top, 0), 0);
@@ -630,8 +705,11 @@
     // #globe-wrap is a square (aspect-ratio:1/1) sized off a CSS
     // min(Xpx, Yvw) formula.
     var SIZES = {
-      globe: { px: 1000, vw: 0.95 }
+      globe: { px: 700, vw: 1 }
     };
+    // The section's reserved height, kept at its original value so the
+    // globe's vertical position on the page stays exactly where it was.
+    var SECTION_MIN_HEIGHT = { px: 1000, vw: 0.95 };
     function clampedSize(spec) {
       return Math.min(spec.px, window.innerWidth * spec.vw);
     }
@@ -642,7 +720,8 @@
     // section itself never changes size as #globe-wrap grows/shrinks.
     globeSection.style.position = 'relative';
     function syncSectionMinHeight() {
-      globeSection.style.minHeight = clampedSize(SIZES.globe) + 'px';
+      if (isFullscreenView) return;
+      globeSection.style.minHeight = clampedSize(SECTION_MIN_HEIGHT) + 'px';
     }
     syncSectionMinHeight();
 
