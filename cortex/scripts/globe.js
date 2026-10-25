@@ -13,7 +13,7 @@
       globeLines:       'rgb(190, 190, 190)',
       globeLinesDots:   'rgb(220, 220, 220)'
     },
-    display: { points: true, map: true, lines: true, markers: true, markerLabel: true, markerPoint: true },
+    display: { points: true, lines: true, markers: true, markerLabel: true, markerPoint: true },
     dots: { total: 30 }
   };
 
@@ -24,8 +24,8 @@
   };
   var txs  = { markerLabels: [] };
   var grps = {
-  map: null, main: null, globe: null, lines: null,
-  points: null, markers: null, lineDots: null, flatMap: null
+  main: null, globe: null, lines: null,
+  points: null, markers: null, lineDots: null
   };
   var ctrs = { interval: 20000, selected: null, index: 0 };
   var anims = { rotateSpeed: 0.0025, targetSpeed: 0.0025, hoveredMarkerIndex: -1, spinEnabled: true };
@@ -132,9 +132,6 @@
     globe.scale.set(cfg.scale.globeScale, cfg.scale.globeScale, cfg.scale.globeScale);
     els.globe = globe;
 
-    grps.map = new THREE.Group();
-    grps.map.name = 'Map';
-
     return grps.globe;
   }
 
@@ -165,94 +162,6 @@
     grps.points.add(pts);
     els.globePoints = pts;
     
-  }
-
-
-  // ── Flat dotted world map ─────────────────────────────────
-  function createFlatMap(grid) {
-    
-    var projected = [];
-    var colors = [];
-    var color = new THREE.Color(cfg.colors.globeDotColor);
-
-    var minX = Infinity, maxX = -Infinity;
-    var minY = Infinity, maxY = -Infinity;
-
-    grid.forEach(function (point, i) {
-      var lat = point.lat * Math.PI / 180;
-      var lon = point.lon * Math.PI / 180;
-
-      var lat2 = lat * lat;
-      var lat4 = lat2 * lat2;
-      var lat6 = lat4 * lat2;
-
-      var x = lon * (
-        0.8707 - 0.131979 * lat2 +
-        lat6 * (-0.013791 + lat2 *
-        (0.003971 * lat2 - 0.001529 * lat4))
-      );
-
-      var y = lat * (
-        1.007226 + lat2 * (
-          0.015085 + lat4 *
-          (-0.044475 + 0.028874 * lat2 - 0.005916 * lat4)
-        )
-      );
-
-      y = -y;
-
-      projected.push({ x: x, y: y });
-      minX = Math.min(minX, x);
-      maxX = Math.max(maxX, x);
-      minY = Math.min(minY, y);
-      maxY = Math.max(maxY, y);
-    });
-
-    // Fit the map within 80% of the globe container
-    var targetWidth = 2400;
-    var targetHeight = 1125
-
-    var mapWidth = Math.max(maxX - minX, 0.001);
-    var mapHeight = Math.max(maxY - minY, 0.001);
-    var centerX = (minX + maxX) / 2;
-    var centerY = (minY + maxY) / 2;
-
-    var scaleX = targetWidth / mapWidth;
-    var scaleY = targetHeight / mapHeight;
-
-    var positions = [];
-
-    projected.forEach(function (p, i) {
-      positions.push(
-        (p.x - centerX) * scaleX,
-        (p.y - centerY) * scaleY,
-        0
-      );
-      color.toArray(colors, i * 3);
-    });
-
-    var geometry = new THREE.BufferGeometry();
-    geometry.addAttribute(
-      'position',
-      new THREE.BufferAttribute(new Float32Array(positions), 3)
-    );
-    geometry.addAttribute(
-      'customColor',
-      new THREE.BufferAttribute(new Float32Array(colors), 3)
-    );
-
-    var material = new THREE.PointsMaterial({
-      color: cfg.colors.globeDotColor,
-      size: cfg.sizes.globeDotSize,
-      sizeAttenuation: false
-    });
-
-    grps.flatMap = new THREE.Group();
-    grps.flatMap.name = 'FlatDottedWorldMap';
-    grps.flatMap.add(new THREE.Points(geometry, material));
-    grps.flatMap.scale.set(1.3, 1.3, 1);
-    grps.flatMap.visible = false;
-    grps.main.add(grps.flatMap);
   }
 
 
@@ -429,7 +338,6 @@
 
     new Points(data.grid);
     grps.globe.add(grps.points);
-    createFlatMap(data.grid);
 
     var cortexMarkers = CORTEX_PROJECTS.map(function (p) {
       return { name: p.title, latitude: p.lat, longitude: p.lon, description: p.description, link: p.link, theme: p.theme };
@@ -498,7 +406,7 @@
 
     // ── Legend card — fixed top-left ──────────────────────────────────────────
     var legendEl = document.createElement('div');
-    legendEl.style.cssText = 'position:absolute;top:15rem;left:6rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:1;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
+    legendEl.style.cssText = 'position:absolute;top:15rem;left:6rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:11;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
 
     // Spin toggle row
     var spinRow = document.createElement('div');
@@ -520,80 +428,6 @@
     spinRow.appendChild(spinLabel);
     spinRow.appendChild(spinToggle);
     legendEl.appendChild(spinRow);
-
-    // ── 2D MAP TOGGLE ROW ────────────────────────────────────────
-    var isFlat = false;
-    var mapRow = document.createElement('div');
-    mapRow.style.cssText =
-      'display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;';
-
-    var mapLabel = document.createElement('p');
-    mapLabel.textContent = '2D MAP';
-    mapLabel.style.cssText =
-      'margin:0;font-family:Manrope,sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.3);';
-
-    var mapToggle = document.createElement('button');
-    mapToggle.setAttribute('aria-label', 'Toggle 2D map');
-    mapToggle.setAttribute('aria-pressed', 'false');
-    mapToggle.style.cssText =
-      'position:relative;width:30px;height:17px;border-radius:9px;border:none;background:rgba(255,255,255,0.18);cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;';
-
-    var mapKnob = document.createElement('span');
-    mapKnob.style.cssText =
-      'position:absolute;top:2.5px;left:2.5px;width:12px;height:12px;border-radius:50%;background:#000;transition:transform 0.2s;transform:translateX(0);';
-
-    mapToggle.appendChild(mapKnob);
-    
-    mapToggle.addEventListener('click', function () {
-      isFlat = !isFlat;
-
-      // Update the toggle switch appearance
-      mapToggle.setAttribute('aria-pressed', String(isFlat));
-      mapToggle.style.background = isFlat
-        ? 'rgba(255,255,255,0.65)'
-        : 'rgba(255,255,255,0.18)';
-      mapKnob.style.transform = isFlat
-        ? 'translateX(13px)'
-        : 'translateX(0)';
-
-      // Switch between globe and flat map
-      grps.globe.visible = !isFlat;
-      grps.flatMap.visible = isFlat;
-
-      if (grps.markers) grps.markers.visible = !isFlat;
-      if (grps.lines) grps.lines.visible = !isFlat;
-      if (grps.lineDots) grps.lineDots.visible = !isFlat;
-
-      if (isFlat) {
-        camera.position.set(0, 0, 2400);
-        container.style.width = widthFormula(SIZES.flat);
-      } else {
-        camera.position.set(0, 0, 700);
-        container.style.width = widthFormula(SIZES.globe);
-      }
-
-      camera.lookAt(0, 0, 0);
-
-      // Resize renderer to match the container
-      syncCanvasToContainer();
-
-      // Recreate controls to clear previous rotation momentum
-      orbitControls.dispose();
-      orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
-      orbitControls.enableDamping = true;
-      orbitControls.dampingFactor = 0.05;
-      orbitControls.rotateSpeed = 0.07;
-      orbitControls.enableZoom = false;
-      orbitControls.enablePan = false;
-      orbitControls.target.set(0, 0, 0);
-      orbitControls.enabled = !isFlat;
-      orbitControls.update();
-    });
-
-    mapRow.appendChild(mapLabel);
-    mapRow.appendChild(mapToggle);
-    legendEl.appendChild(mapRow);
-
 
     // Divider
     var divEl = document.createElement('div');
@@ -794,29 +628,21 @@
     setup(app);
 
     // #globe-wrap is a square (aspect-ratio:1/1) sized off a CSS
-    // min(Xpx, Yvw) formula. SIZES below are the two states.
+    // min(Xpx, Yvw) formula.
     var SIZES = {
-      globe: { px: 700,  vw: 1 },
-      flat:  { px: 1000, vw: 0.95 }
+      globe: { px: 1000, vw: 0.95 }
     };
     function clampedSize(spec) {
       return Math.min(spec.px, window.innerWidth * spec.vw);
     }
-    function widthFormula(spec) {
-      return 'min(' + spec.px + 'px, ' + (spec.vw * 100) + 'vw)';
-    }
 
-    // No animation: the box resizes instantly on click, nothing tweens.
-    container.style.transition = 'none';
     container.style.position = 'relative';
 
-    // Reserve enough height on #globe-section (the box's parent) for the
-    // larger of the two states, so the section itself never changes size
-    // as #globe-wrap grows/shrinks. Anything anchored to the section —
-    // like the toggle button below — then has a fixed point to sit at.
+    // Reserve enough height on #globe-section (the box's parent) so the
+    // section itself never changes size as #globe-wrap grows/shrinks.
     globeSection.style.position = 'relative';
     function syncSectionMinHeight() {
-      globeSection.style.minHeight = clampedSize(SIZES.flat) + 'px';
+      globeSection.style.minHeight = clampedSize(SIZES.globe) + 'px';
     }
     syncSectionMinHeight();
 
