@@ -399,7 +399,6 @@
     container.addEventListener('mouseleave', function () { if (anims.spinEnabled) anims.targetSpeed = 0.0025; anims.hoveredMarkerIndex = -1; });
 
     // ── Side panel (legend + popup) ──────────────────────────────────────────
-    var THEMES = ['education','food','water','health','animals','plants','energy','innovation'];
     var activeThemes = new Set(THEMES);
     var currentPopupData = null;
     var dropOpen = false;
@@ -630,7 +629,7 @@
 
       fullscreenBtn.style.display = 'none';
       spinRow.style.display = 'none';
-      popupEl.style.display = 'none';
+      popupEl.style.display = 'block';
     }
 
     function showPopup(p) {

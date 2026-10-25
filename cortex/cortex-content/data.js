@@ -1,218 +1,48 @@
+var THEMES = ['innovation', 'conservation', 'aquatic'];
 const CORTEX_PROJECTS = [
   {
-    "lat": 42.3770,
-    "lon": -71.1167,
-    "theme": "education",
-    "title": "AI Tutor Systems",
-    "description": "Personalized AI tutors provide adaptive learning support to students.",
-    "link": "https://www.khanacademy.org/khan-labs",
-    "featured": true
-  },
-  {
-    "lat": 37.4275,
-    "lon": -122.1697,
-    "theme": "education",
-    "title": "Virtual Reality Classrooms",
-    "description": "VR platforms enable immersive science and history education experiences.",
-    "link": "https://www.classvr.com",
-    "featured": true
-  },
-  {
-    "lat": 51.5074,
-    "lon": -0.1278,
-    "theme": "education",
-    "title": "Learning Analytics AI",
-    "description": "Machine learning identifies struggling students and recommends interventions.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 36.7783,
-    "lon": -119.4179,
-    "theme": "food",
-    "title": "AI Crop Monitoring",
-    "description": "Computer vision analyzes crop health and predicts yields.",
-    "link": "https://www.climatefieldview.com",
-    "featured": true
-  },
-  {
-    "lat": 41.8781,
-    "lon": -87.6298,
-    "theme": "food",
-    "title": "Autonomous Farm Robots",
-    "description": "Robots use AI to weed, harvest, and monitor fields.",
-    "link": "https://carbonrobotics.com",
-    "featured": true
-  },
-  {
-    "lat": 52.3676,
-    "lon": 4.9041,
-    "theme": "food",
-    "title": "Precision Agriculture Platforms",
-    "description": "Sensor networks optimize fertilizer and water usage.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 32.7157,
-    "lon": -117.1611,
-    "theme": "water",
-    "title": "Smart Water Leak Detection",
-    "description": "AI systems detect underground pipe leaks before major failures occur.",
-    "link": "https://www.xylem.com",
-    "featured": true
-  },
-  {
-    "lat": 1.3521,
-    "lon": 103.8198,
-    "theme": "water",
-    "title": "Autonomous Water Quality Sensors",
-    "description": "IoT devices continuously monitor reservoirs and waterways.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 25.2048,
-    "lon": 55.2708,
-    "theme": "water",
-    "title": "AI Desalination Optimization",
-    "description": "Machine learning improves efficiency of desalination plants.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 42.3601,
-    "lon": -71.0589,
-    "theme": "health",
-    "title": "AI Medical Imaging",
-    "description": "Deep learning assists doctors in detecting diseases from scans.",
-    "link": "https://www.nvidia.com/en-us/healthcare",
-    "featured": true
-  },
-  {
-    "lat": 30.2672,
-    "lon": -97.7431,
-    "theme": "health",
-    "title": "Remote Patient Monitoring",
-    "description": "Wearable sensors transmit real-time health data to clinicians.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 2.00,
-    "lon": 30.00,
-    "theme": "health",
-    "title": "Autonomous Medical Delivery Drones",
-    "description": "Zipline AI-enabled drones transport medical supplies to hospitals.",
-    "link": "https://www.youtube.com/watch?v=73rUjrow5pI",
-    "featured": true
-  },
-  {
-    "lat": -1.2921,
-    "lon": 36.8219,
-    "theme": "animals",
-    "title": "AI Anti-Poaching Systems",
-    "description": "Computer vision and sensors detect threats to wildlife.",
-    "link": "https://www.resolve.ngo",
-    "featured": true
-  },
-  {
-    "lat": -24.3456,
-    "lon": 25.9089,
-    "theme": "animals",
-    "title": "Wildlife Tracking Networks",
-    "description": "GPS and IoT systems monitor animal migration patterns.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": -3.4653,
-    "lon": -62.2159,
-    "theme": "animals",
-    "title": "Acoustic Rainforest Monitoring",
-    "description": "AI identifies animal species from forest audio recordings.",
-    "link": "https://rfcx.org",
-    "featured": true
-  },
-  {
-    "lat": 17.6078,
-    "lon": 8.0817,
-    "theme": "plants",
-    "title": "Great Green Wall",
-    "description": "Follow Andrew Millison with the UN World Food Programme to explore Zai Pits in Niger.",
-    "link": "https://www.youtube.com/watch?v=xbBdIG--b58&list=PLXJl174AJywGQsu5W4-0xc0H77GIKuQsE&index=4",
-    "featured": true
-  },
-  {
-    "lat": -3.1190,
-    "lon": -60.0217,
-    "theme": "plants",
-    "title": "Satellite Forest Monitoring",
-    "description": "AI analyzes satellite imagery to track deforestation.",
-    "link": "https://globalforestwatch.org",
-    "featured": true
-  },
-  {
-    "lat": 60.1699,
-    "lon": 24.9384,
-    "theme": "plants",
-    "title": "Smart Greenhouse Systems",
-    "description": "Sensors and AI optimize growing conditions for crops.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 35.6895,
-    "lon": 139.6917,
-    "theme": "energy",
-    "title": "Smart Grid AI",
-    "description": "Machine learning balances electricity demand and supply.",
-    "link": "https://www.hitachi.com",
-    "featured": true
-  },
-  {
-    "lat": 55.7558,
-    "lon": 37.6173,
-    "theme": "energy",
-    "title": "Predictive Wind Turbine Maintenance",
-    "description": "AI predicts equipment failures before they occur.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 39.7392,
-    "lon": -104.9903,
-    "theme": "energy",
-    "title": "Solar Forecasting Systems",
-    "description": "AI predicts solar energy production from weather data.",
-    "link": "#",
-    "featured": true
-  },
-  {
-    "lat": 37.4848,
-    "lon": -122.1484,
+    "lat": 30.215,
+    "lon": -97.761,
     "theme": "innovation",
-    "title": "Autonomous Delivery Robots",
-    "description": "Self-driving robots transport goods across campuses and cities.",
-    "link": "https://serve.com",
+    "title": "Saronic Technologies",
+    "description": "Cutting-edge unmanned surface vehicles that enable maritime security and domain awareness.",
+    "link": "https://www.saronic.com",
     "featured": true
   },
   {
-    "lat": 47.6062,
-    "lon": -122.3321,
-    "theme": "innovation",
-    "title": "Generative AI Research Platforms",
-    "description": "Large AI models accelerate software development and discovery.",
-    "link": "https://openai.com",
+    "lat": 37.463,
+    "lon": -122.172,
+    "theme": "research",
+    "title": "SRI International",
+    "description": "Independent nonprofit R&D organization advancing robotics, AI, quantum technologies, space systems, and environmental sensing.",
+    "link": "https://www.sri.com",
     "featured": true
   },
   {
-    "lat": 48.8566,
-    "lon": 2.3522,
-    "theme": "innovation",
-    "title": "Digital Twin Cities",
-    "description": "Virtual city models simulate infrastructure and urban planning decisions.",
-    "link": "#",
+    "lat": 38.907,
+    "lon": -77.037,
+    "theme": "conservation",
+    "title": "Conservation X Labs",
+    "description": "Develops AI-powered wildlife monitoring tools to track populations.",
+    "link": "https://www.conservationxlabs.com",
     "featured": true
-  }
+  },
+  {
+    "lat": 51.923,
+    "lon": 4.478,
+    "theme": "aquatic",
+    "title": "The Ocean Cleanup",
+    "description": "Large-scale systems to intercept plastic in rivers and oceans.",
+    "link": "https://theoceancleanup.com",
+    "featured": true
+  },
+  {
+    "lat": 37.765,
+    "lon": -122.241,
+    "theme": "aquatic",
+    "title": "Saildrone",
+    "description": "Deploys autonomous surface vehicles to collect ocean, weather, climate, and maritime intelligence data.",
+    "link": "https://www.saildrone.com",
+    "featured": true
+  },
 ]
