@@ -125,11 +125,11 @@
     </section>
 
     <!-- VIEW ALL PROJECTS -->
-    <section id="projects" class="section" style="padding-top:17rem;">
+    <section id="projects" class="section" style="position:relative;padding-top:17rem;z-index:10;">
       <div class="container" style="padding-bottom:0;">
         <h2 class="section-title">VIEW ALL PROJECTS</h2>
         <p class="section-intro">Click any marker to explore project details, funding, and outcomes.</p>
-        <div class="cortex-stats" style="margin-bottom:0;">
+        <div class="cortex-stats" style="position:relative;z-index:10;margin-bottom:0;">
           <div class="cortex-stat">
             <span class="cortex-stat-num">21</span>
             <span class="cortex-stat-label">Active Projects</span>
@@ -147,8 +147,8 @@
     </section>
 
     <!-- THREE.JS GLOBE -->
-    <div id="globe-section" style="position:relative;width:100%;background:#000000;display:flex;justify-content:center;align-items:center;margin-top:-75px;">
-      <div id="globe-wrap" style="position:relative;width:min(760px,92vw);aspect-ratio:1/1;background:#000000;"></div>
+    <div id="globe-section" style="position:relative;width:100%;display:flex;justify-content:center;align-items:center;margin-top:0;transform:translateY(-250px);z-index:1">
+      <div id="globe-wrap" style="position:relative;width:min(700px,92vw);flex-shrink:0;margin:0 auto;aspect-ratio:1/1;transition:width 0.6s ease;"></div>
     </div>
 
     <!-- CONSERVATION ORGANIZATIONS -->
