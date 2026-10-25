@@ -9,15 +9,14 @@ echo "Updating submodule..."
 git -C "$GIT_ROOT" submodule update --remote codex/codex-content
 
 echo ""
-echo "Building public-tagged files..."
+echo "Building files from Learn/Learn - Compaulo..."
 
 while IFS= read -r FILE; do
-  if grep -q "^  - Public" "$FILE"; then
-    BASENAME="$(basename "$FILE" .md)"
-    OUTNAME="$(echo "$BASENAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').html"
-    OUTPATH="$CODEX/pages/$OUTNAME"
+BASENAME="$(basename "$FILE" .md)"
+OUTNAME="$(echo "$BASENAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').html"
+OUTPATH="$CODEX/pages/$OUTNAME"
 
-    python3 - "$FILE" "$CODEX/pages/template.html" "$OUTPATH" << 'PYEOF'
+python3 - "$FILE" "$CODEX/pages/template.html" "$OUTPATH" << 'PYEOF'
 import sys, re, os
 
 md_file, template_file, out_file = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -45,18 +44,27 @@ def flush():
     pending.clear()
 
 for line in body.splitlines():
-    if line.startswith('## '):
+    if line.startswith('#### '):
         flush()
         cur_section = {'subtitle': None, 'paragraphs': []}
-        cur_chapter = {'title': line[3:].strip(), 'sections': [cur_section]}
+        cur_chapter = {
+            'title': line[5:].strip(),
+            'sections': [cur_section]
+        }
         chapters.append(cur_chapter)
-    elif line.startswith('### '):
+
+    elif line.startswith('##### '):
         flush()
-        cur_section = {'subtitle': line[4:].strip(), 'paragraphs': []}
+        cur_section = {
+            'subtitle': line[6:].strip(),
+            'paragraphs': []
+        }
         if cur_chapter:
             cur_chapter['sections'].append(cur_section)
-    elif line.strip() == '':
+
+    elif line.strip() == '' or line.strip() == '---' or line.strip() == '## <wbr>':
         flush()
+
     elif cur_chapter:
         pending.append(line)
 
@@ -109,6 +117,5 @@ with open(out_file, 'w') as f:
     f.write(html)
 PYEOF
 
-    echo "  $(basename "$FILE") → $OUTNAME"
-  fi
-done < <(find "$SUBMODULE" -name "*.md")
+echo "  $(basename "$FILE") → $OUTNAME"
+done < <(find "$SUBMODULE/Learn/Learn - Compaulo" -name "*.md")
