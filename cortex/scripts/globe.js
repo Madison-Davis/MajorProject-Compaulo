@@ -4,8 +4,8 @@
   // ── Config (greyscale palette) ────────────────────────────────────────────
   var cfg = {
     urls: { globeTexture: 'cortex-content/threejs-globe-ref/assets/textures/earth_dark.jpg' },
-    sizes:   { globe: 200, globeDotSize: 2 },
-    scale:   { points: 0.025, markers: 0.025, globeScale: 1 },
+    sizes:   { globe: 200, globeDotSize: 1.25 },
+    scale:   { points: 0.008, markers: 0.008, globeScale: 1 },
     colors: {
       globeDotColor:    'rgb(155, 155, 155)',
       globeMarkerColor: 'rgb(200, 200, 200)',
@@ -34,22 +34,32 @@
   var shaders = { atmosphere: {}, globe: {}, dot: {} };
 
   shaders.globe.vertexShader = [
-    'varying vec3 vNormal; varying vec2 vUv;',
+    'varying vec3 vNormal; varying vec3 vViewPosition;',
     'void main() {',
     '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
     '  vNormal = normalize(normalMatrix * normal);',
-    '  vUv = uv;',
+    '  vViewPosition = -(modelViewMatrix * vec4(position, 1.0)).xyz;',
     '}'
   ].join('\n');
 
   shaders.globe.fragmentShader = [
-    'uniform sampler2D texture;',
-    'varying vec3 vNormal; varying vec2 vUv;',
+    'varying vec3 vNormal; varying vec3 vViewPosition;',
     'void main() {',
-    '  vec3 diffuse = texture2D(texture, vUv).xyz;',
-    '  float intensity = 1.05 - dot(vNormal, vec3(0.0, 0.0, 1.0));',
-    '  vec3 atmosphere = vec3(1.0, 1.0, 1.0) * pow(intensity, 3.0);',
-    '  gl_FragColor = vec4(diffuse + atmosphere, 1.0);',
+    '  vec3 n = normalize(vNormal);',
+    '  vec3 view = normalize(vViewPosition);',
+    // Confine reflections to grazing angles. Narrow bands follow the sphere's
+    // curvature instead of putting reflected panels across its center.
+    '  float facing = max(dot(n, view), 0.0);',
+    '  float edge = 1.0 - facing;',
+    '  float key = pow(max(dot(normalize(n.xy), normalize(vec2(-0.8, 0.6))), 0.0), 3.0);',
+    '  float fill = pow(max(dot(normalize(n.xy), normalize(vec2(0.65, -0.76))), 0.0), 5.0);',
+    '  float outerRim = pow(edge, 12.0);',
+    // Continuous silver silhouette, independent of the directional highlights.
+    '  float outline = pow(edge, 5.0) * 0.26;',
+    '  float reflection = smoothstep(0.60, 0.65, edge) * (1.0 - smoothstep(0.76, 0.82, edge));',
+    '  float silver = 0.001 + outline + outerRim * (key * 0.62 + fill * 0.30);',
+    '  silver += reflection * (key * 0.24 + fill * 0.10);',
+    '  gl_FragColor = vec4(vec3(silver), 1.0);',
     '}'
   ].join('\n');
 
@@ -64,22 +74,13 @@
   shaders.atmosphere.fragmentShader = [
     'varying vec3 vNormal;',
     'void main() {',
-    '  float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 4.0);',
-    '  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0) * intensity;',
+    '  float edge = abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0)));',
+    '  float intensity = pow(1.0 - edge, 3.0) * smoothstep(0.0, 0.25, edge) * 0.025;',
+    '  gl_FragColor = vec4(vec3(0.85), intensity);',
     '}'
   ].join('\n');
 
   // ── Utils ─────────────────────────────────────────────────────────────────
-  function toSphere(lat, lng, scale) {
-    var phi   = (90 - lat) * Math.PI / 180;
-    var theta = (180 - lng) * Math.PI / 180;
-    return {
-      x: scale * Math.sin(phi) * Math.cos(theta),
-      y: scale * Math.cos(phi),
-      z: scale * Math.sin(phi) * Math.sin(theta)
-    };
-  }
-
   var GLOBE_R = 200, CURVE_MIN = 20, CURVE_MAX = 200;
 
   function clamp(n, lo, hi) { return n <= lo ? lo : n >= hi ? hi : n; }
@@ -114,47 +115,104 @@
   // ── Globe class ───────────────────────────────────────────────────────────
   function Globe() {
     var radius   = cfg.sizes.globe;
-    var geometry = new THREE.SphereGeometry(radius, 64, 64);
+    var geometry = new THREE.SphereGeometry(radius, 128, 96);
 
     grps.globe = new THREE.Group();
     grps.globe.name = 'Globe';
 
     // globe mesh
-    var texture  = loader.load(cfg.urls.globeTexture);
     var globeMat = new THREE.ShaderMaterial({
-      uniforms:       { texture: { value: texture } },
       vertexShader:   shaders.globe.vertexShader,
-      fragmentShader: shaders.globe.fragmentShader,
-      blending:       THREE.AdditiveBlending,
-      transparent:    true
+      fragmentShader: shaders.globe.fragmentShader
     });
     var globe = new THREE.Mesh(geometry, globeMat);
     globe.scale.set(cfg.scale.globeScale, cfg.scale.globeScale, cfg.scale.globeScale);
     els.globe = globe;
+    grps.globe.add(globe);
+
+    // A separate back-facing shell feathers the silhouette into the black page.
+    els.atmosphere = new THREE.Mesh(geometry, new THREE.ShaderMaterial({
+      vertexShader: shaders.atmosphere.vertexShader,
+      fragmentShader: shaders.atmosphere.fragmentShader,
+      side: THREE.BackSide,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    }));
+    els.atmosphere.scale.setScalar(1.008);
+    grps.globe.add(els.atmosphere);
 
     return grps.globe;
   }
 
   // ── Points class ──────────────────────────────────────────────────────────
-  function Points(grid) {
-    var radius  = cfg.sizes.globe + cfg.sizes.globe * cfg.scale.points;
-    var posArr  = [], colArr = [], sizeArr = [];
-    var color   = new THREE.Color();
+  function Points() {
+    var radius = cfg.sizes.globe * (1 + cfg.scale.points);
+    var posArr = [], uvArr = [], sizeArr = [];
+    var total = 110000;
+    var goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
-    for (var i = 0; i < grid.length; i++) {
-      var pt = toSphere(grid[i].lat, grid[i].lon, radius);
-      posArr.push(-pt.x, -pt.y, -pt.z);
+    // One equal-area Fibonacci distribution over the entire sphere. Land is
+    // masked separately, so coastlines cannot change the spacing or form clumps.
+    for (var i = 0; i < total; i++) {
+      var y = 1 - 2 * (i + 0.5) / total;
+      var latitude = Math.asin(y);
+      var longitude = (i * goldenAngle) % (2 * Math.PI) - Math.PI;
+      var position = coordToPos(latitude * 180 / Math.PI, longitude * 180 / Math.PI, radius);
+      posArr.push(position.x, position.y, position.z);
+      uvArr.push((longitude + Math.PI) / (2 * Math.PI), latitude / Math.PI + 0.5);
       sizeArr.push(cfg.sizes.globeDotSize);
-      color.set(cfg.colors.globeDotColor);
-      color.toArray(colArr, i * 3);
     }
 
     var geo = new THREE.BufferGeometry();
     geo.addAttribute('position',    new THREE.BufferAttribute(new Float32Array(posArr),  3));
-    geo.addAttribute('customColor', new THREE.BufferAttribute(new Float32Array(colArr),  3));
+    geo.addAttribute('landUv',      new THREE.BufferAttribute(new Float32Array(uvArr),   2));
     geo.addAttribute('size',        new THREE.BufferAttribute(new Float32Array(sizeArr), 1));
 
-    var mat = new THREE.PointsMaterial({ color: cfg.colors.globeDotColor, size: cfg.sizes.globeDotSize });
+    // Screen-facing circles, shaded by their position on the sphere. Keeping
+    // light in view space gives the globe a steady studio-light finish on drag.
+    var landMask = loader.load('cortex-content/maps/land-mask.png');
+    landMask.minFilter = THREE.NearestFilter;
+    landMask.magFilter = THREE.NearestFilter;
+    landMask.generateMipmaps = false;
+    var mat = new THREE.ShaderMaterial({
+      uniforms: {
+        pixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
+        landMask: { value: landMask }
+      },
+      vertexShader: [
+        'attribute float size;',
+        'attribute vec2 landUv;',
+        'varying vec2 vLandUv;',
+        'uniform float pixelRatio;',
+        'varying float vLight;',
+        'void main() {',
+        '  vLandUv = landUv;',
+        '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
+        '  vec3 n = normalize(normalMatrix * normalize(position));',
+        '  vec3 view = normalize(-mv.xyz);',
+        '  float facing = max(dot(n, view), 0.0);',
+        '  float light = max(dot(n, normalize(vec3(-0.7, 0.85, 1.0))), 0.0);',
+        '  vLight = (0.14 + light * 0.46) * smoothstep(0.0, 0.25, facing);',
+        '  gl_Position = projectionMatrix * mv;',
+        '  gl_PointSize = max(1.0, size * pixelRatio * (300.0 / -mv.z));',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'uniform sampler2D landMask;',
+        'varying vec2 vLandUv;',
+        'varying float vLight;',
+        'void main() {',
+        '  if (texture2D(landMask, vLandUv).r < 0.5) discard;',
+        '  float r = length(gl_PointCoord - vec2(0.5));',
+        '  if (r > 0.5) discard;',
+        '  float alpha = 1.0 - smoothstep(0.30, 0.5, r);',
+        '  gl_FragColor = vec4(vec3(vLight), alpha);',
+        '}'
+      ].join('\n'),
+      transparent: true,
+      depthWrite: false
+    });
     var pts = new THREE.Points(geo, mat);
 
     grps.points = new THREE.Group();
@@ -189,7 +247,7 @@
     this.group.add(hitMesh);
     els.markerHits.push({ mesh: hitMesh, data: projectData, point: this.point, group: this.group });
 
-    this.group.position.set(-cords.x, cords.y, -cords.z);
+    this.group.position.copy(cords);
     grps.markers.add(this.group);
   }
 
@@ -218,8 +276,12 @@
 
     for (var i = 0; i < countries.length; i++) {
       var c = countries[i];
-      if (c.latitude && c.longitude) {
-        var cords = toSphere(+c.latitude, +c.longitude, radius);
+      var lat = Number(c.latitude), lon = Number(c.longitude);
+      if (c.latitude != null && c.longitude != null &&
+          String(c.latitude).trim() !== '' && String(c.longitude).trim() !== '' &&
+          Number.isFinite(lat) && Number.isFinite(lon) &&
+          Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+        var cords = coordToPos(lat, lon, radius);
         var marker = new Marker(mat, geo, hitGeo, c.name, cords, c);
         els.markers.push(marker);
       }
@@ -336,7 +398,7 @@
     var globe = new Globe();
     grps.main.add(globe);
 
-    new Points(data.grid);
+    new Points();
     grps.globe.add(grps.points);
 
     var cortexMarkers = CORTEX_PROJECTS.map(function (p) {
@@ -382,10 +444,10 @@
     camera.lookAt(scene.position);
     camera.position.set(0, 15, 30);
 
-    var renderer = new THREE.WebGLRenderer({ alpha: true });
+    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(W, H);
-    renderer.setPixelRatio(window.devicePixelRatio * 1.5);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
     renderer.domElement.style.display = 'block';
     // Percentage, not a fixed px size set by setSize(): lets the browser's
@@ -682,7 +744,10 @@
       mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
       var targets = els.markerHits.map(function (h) { return h.mesh; });
+      // The solid surface also blocks interaction with far-side markers.
+      targets.push(els.globe);
       var hits = raycaster.intersectObjects(targets);
+      anims.hoveredMarkerIndex = -1;
       if (hits.length > 0) {
         for (var k = 0; k < els.markerHits.length; k++) {
           if (els.markerHits[k].mesh === hits[0].object && els.markerHits[k].group.visible) {
