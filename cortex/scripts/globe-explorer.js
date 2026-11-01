@@ -3,7 +3,7 @@
 
   // The UI consumes project records only; rendering and coordinates stay in globe.js.
   window.createGlobeExplorer = function (options) {
-    var category = 'conservation', technologies = new Set();
+    var category = 'all', technologies = new Set();
     var selectedId = null, matches = [], categoryButtons = [];
     var pageIndex = 0, pageSize = 3;
     var root = document.createElement('div');
