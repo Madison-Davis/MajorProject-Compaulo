@@ -401,11 +401,13 @@
     new Points();
     grps.globe.add(grps.points);
 
-    var cortexMarkers = CORTEX_PROJECTS.map(function (p) {
-      return Object.assign({}, p, { name: p.title, latitude: p.lat, longitude: p.lon });
-    });
-    new Markers(cortexMarkers);
-    grps.globe.add(grps.markers);
+    if (app.showProjects) {
+      var cortexMarkers = CORTEX_PROJECTS.map(function (p) {
+        return Object.assign({}, p, { name: p.title, latitude: p.lat, longitude: p.lon });
+      });
+      new Markers(cortexMarkers);
+      grps.globe.add(grps.markers);
+    }
 
     app.scene.add(grps.main);
   }
@@ -461,186 +463,7 @@
     container.addEventListener('mouseenter', function () { if (anims.spinEnabled) anims.targetSpeed = 0; });
     container.addEventListener('mouseleave', function () { if (anims.spinEnabled) anims.targetSpeed = 0.0025; anims.hoveredMarkerIndex = -1; });
 
-    // ── Side panel (legend + popup) ──────────────────────────────────────────
-    var activeThemes = new Set(THEMES);
-    var currentPopupData = null;
-    var dropOpen = false;
-    var globeIsVisible = false;
-
-    // ── Legend card — fixed top-left ──────────────────────────────────────────
-    var legendEl = document.createElement('div');
-    legendEl.style.cssText = 'position:absolute;top:15rem;left:4rem;width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1rem 1.1rem;z-index:1;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
-
-    // Open-in-full-screen button
-    var fullscreenBtn = document.createElement('button');
-    fullscreenBtn.textContent = 'OPEN IN FULL SCREEN';
-    fullscreenBtn.style.cssText = 'width:100%;margin-bottom:0.85rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:0.42rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.08em;color:#fff;text-transform:uppercase;transition:background 0.2s;';
-    fullscreenBtn.addEventListener('mouseover', function () { fullscreenBtn.style.background = 'rgba(255,255,255,0.16)'; });
-    fullscreenBtn.addEventListener('mouseout',  function () { fullscreenBtn.style.background = 'rgba(255,255,255,0.08)'; });
-    fullscreenBtn.addEventListener('click', function () {
-      var url = window.location.href.split('#')[0] + '#globe-fullscreen';
-      window.open(url, '_blank');
-    });
-    legendEl.appendChild(fullscreenBtn);
-
-    // Spin toggle row
-    var spinRow = document.createElement('div');
-    spinRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;';
-    var spinLabel = document.createElement('p');
-    spinLabel.textContent = 'ROTATE';
-    spinLabel.style.cssText = 'margin:0;font-family:Manrope,sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.3);';
-    var spinToggle = document.createElement('button');
-    spinToggle.style.cssText = 'position:relative;width:30px;height:17px;border-radius:9px;border:none;background:rgba(255,255,255,0.65);cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;';
-    var spinKnob = document.createElement('span');
-    spinKnob.style.cssText = 'position:absolute;top:2.5px;left:2.5px;width:12px;height:12px;border-radius:50%;background:#000;transition:transform 0.2s;transform:translateX(13px);';
-    spinToggle.appendChild(spinKnob);
-    spinToggle.addEventListener('click', function () {
-      anims.spinEnabled = !anims.spinEnabled;
-      anims.targetSpeed = anims.spinEnabled ? 0.0025 : 0;
-      spinToggle.style.background = anims.spinEnabled ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.18)';
-      spinKnob.style.transform = anims.spinEnabled ? 'translateX(13px)' : 'translateX(0)';
-    });
-    spinRow.appendChild(spinLabel);
-    spinRow.appendChild(spinToggle);
-    legendEl.appendChild(spinRow);
-
-    // Divider
-    var divEl = document.createElement('div');
-    divEl.style.cssText = 'border-top:1px solid rgba(255,255,255,0.07);margin:0 -1.1rem 0.85rem;';
-    legendEl.appendChild(divEl);
-
-    // Filter label
-    var filterLabel = document.createElement('p');
-    filterLabel.textContent = 'FILTER BY TOPIC';
-    filterLabel.style.cssText = 'margin:0 0 0.5rem;font-family:Manrope,sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.3);';
-    legendEl.appendChild(filterLabel);
-
-    // Dropdown trigger
-    var dropWrap = document.createElement('div');
-    dropWrap.style.cssText = 'position:relative;';
-    var dropTrigger = document.createElement('button');
-    dropTrigger.style.cssText = 'width:100%;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:0.38rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.7rem;color:#fff;';
-    var trigText = document.createElement('span');
-    trigText.textContent = 'All Topics';
-    var trigArrow = document.createElement('span');
-    trigArrow.textContent = '▾';
-    trigArrow.style.cssText = 'font-size:0.6rem;color:rgba(255,255,255,0.45);transition:transform 0.18s;margin-left:0.4rem;';
-    dropTrigger.appendChild(trigText);
-    dropTrigger.appendChild(trigArrow);
-
-    // Dropdown panel
-    var dropPanel = document.createElement('div');
-    dropPanel.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#0f0f0f;border:1px solid rgba(255,255,255,0.12);border-top:none;border-radius:0 0 20px 20px;overflow-y:auto;overflow-x:hidden;z-index:20;max-height:200px;';
-
-    function updateTrigText() {
-      trigText.textContent = activeThemes.size === THEMES.length ? 'All Topics'
-        : activeThemes.size === 0 ? 'None'
-        : activeThemes.size + ' of ' + THEMES.length;
-    }
-
-    function applyFilter() {
-      for (var i = 0; i < els.markerHits.length; i++) {
-        var h = els.markerHits[i];
-        h.group.visible = activeThemes.has(h.data.theme);
-        if (!h.group.visible) h.point.scale.set(1, 1, 1);
-      }
-      if (currentPopupData && !activeThemes.has(currentPopupData.theme)) hidePopup();
-      updateTrigText();
-    }
-
-    // All / None toggle row
-    var allNoneRow = document.createElement('div');
-    allNoneRow.style.cssText = 'display:flex;gap:0.4rem;padding:0.4rem 0.7rem 0.3rem;border-bottom:1px solid rgba(255,255,255,0.07);';
-    var allCbs = [];
-    function makeToggleBtn(label) {
-      var btn = document.createElement('button');
-      btn.textContent = label;
-      btn.style.cssText = 'flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);font-family:Manrope,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;padding:0.22rem 0;cursor:pointer;';
-      btn.addEventListener('mouseover', function () { btn.style.background = 'rgba(255,255,255,0.12)'; });
-      btn.addEventListener('mouseout',  function () { btn.style.background = 'rgba(255,255,255,0.06)'; });
-      return btn;
-    }
-    var btnAll  = makeToggleBtn('ALL');
-    var btnNone = makeToggleBtn('NONE');
-    btnAll.addEventListener('click', function (e) {
-      e.stopPropagation();
-      THEMES.forEach(function (t) { activeThemes.add(t); });
-      allCbs.forEach(function (cb) { cb.checked = true; });
-      applyFilter();
-    });
-    btnNone.addEventListener('click', function (e) {
-      e.stopPropagation();
-      activeThemes.clear();
-      allCbs.forEach(function (cb) { cb.checked = false; });
-      applyFilter();
-    });
-    allNoneRow.appendChild(btnAll);
-    allNoneRow.appendChild(btnNone);
-    dropPanel.appendChild(allNoneRow);
-
-    THEMES.forEach(function (theme) {
-      var row = document.createElement('label');
-      row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.7rem;cursor:pointer;font-family:Manrope,sans-serif;font-size:0.7rem;color:#fff;user-select:none;';
-      var cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.checked = true;
-      cb.style.cssText = 'accent-color:#aaa;width:11px;height:11px;cursor:pointer;flex-shrink:0;';
-      allCbs.push(cb);
-      var txt = document.createElement('span');
-      txt.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
-      row.appendChild(cb);
-      row.appendChild(txt);
-      row.addEventListener('mouseover', function () { row.style.background = 'rgba(255,255,255,0.04)'; });
-      row.addEventListener('mouseout',  function () { row.style.background = ''; });
-      cb.addEventListener('change', function () {
-        if (cb.checked) { activeThemes.add(theme); } else { activeThemes.delete(theme); }
-        applyFilter();
-      });
-      dropPanel.appendChild(row);
-    });
-
-    dropTrigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dropOpen = !dropOpen;
-      dropPanel.style.display = dropOpen ? 'block' : 'none';
-      trigArrow.style.transform = dropOpen ? 'rotate(180deg)' : '';
-    });
-    document.addEventListener('click', function () {
-      if (dropOpen) { dropOpen = false; dropPanel.style.display = 'none'; trigArrow.style.transform = ''; }
-    });
-    dropPanel.addEventListener('click', function (e) { e.stopPropagation(); });
-
-    dropWrap.appendChild(dropTrigger);
-    dropWrap.appendChild(dropPanel);
-    legendEl.appendChild(dropWrap);
-    globeSection.appendChild(legendEl);
-
-    // ── Popup card — absolute middle-left of globe ────────────────────────────
-    var popupEl = document.createElement('div');
-    popupEl.style.cssText = 'position:absolute;top:50%;left:4rem;transform:translateY(-35%);width:220px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1.5rem 1.1rem 1.1rem;z-index:10;opacity:0;pointer-events:none;transition:opacity 0.2s ease;';
-    var popupClose = document.createElement('button');
-    popupClose.textContent = '×';
-    popupClose.style.cssText = 'position:absolute;top:0.6rem;right:0.7rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.1rem;cursor:pointer;line-height:1;padding:0;font-family:sans-serif;';
-    popupClose.addEventListener('click', function () { hidePopup(); });
-    var popupTheme = document.createElement('p');
-    popupTheme.style.cssText = 'margin:0 0 0.35rem;font-family:Manrope,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.35);';
-    var popupTitle = document.createElement('h3');
-    popupTitle.style.cssText = 'margin:0 0 0.6rem;font-family:Manrope,sans-serif;font-size:0.88rem;font-weight:700;color:#fff;line-height:1.3;';
-    var popupDesc = document.createElement('p');
-    popupDesc.style.cssText = 'margin:0 0 1rem;font-family:Manrope,sans-serif;font-size:0.76rem;color:rgba(255,255,255,0.55);line-height:1.5;';
-    var popupLink = document.createElement('a');
-    popupLink.textContent = 'Learn More ↗';
-    popupLink.target = '_blank';
-    popupLink.style.cssText = 'font-family:Manrope,sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:0.38rem 0.8rem;display:inline-block;';
-    popupEl.appendChild(popupClose);
-    popupEl.appendChild(popupTheme);
-    popupEl.appendChild(popupTitle);
-    popupEl.appendChild(popupDesc);
-    popupEl.appendChild(popupLink);
-    globeSection.appendChild(popupEl);
-
-    // ── Full-screen view: hide everything else on the page, showing only
-    // the globe and the filter-by-topic control ───────────────────────────
+    // Fullscreen owns the project explorer; the embedded view is globe-only.
     if (isFullscreenView) {
       // Put the explorer directly in the viewport, outside the page's layout.
       document.body.appendChild(globeSection);
@@ -662,51 +485,10 @@
       fsHeader.appendChild(fsHeaderInner);
       document.body.insertBefore(fsHeader, document.body.firstChild);
 
-      legendEl.style.display = 'none';
-      popupEl.style.display = 'none';
 
     }
 
-    function showPopup(p) {
-      if (explorer) { explorer.hover(p); return; }
-      if (!globeIsVisible) return;
-      currentPopupData = p;
-      popupTheme.textContent = p.theme || '';
-      popupTitle.textContent = p.name || '';
-      popupDesc.textContent = p.description || '';
-      popupLink.href = p.link || '#';
-      popupEl.style.opacity = legendEl.style.opacity || '1';
-      popupEl.style.pointerEvents = 'auto';
-    }
-    function hidePopup() {
-      currentPopupData = null;
-      popupEl.style.opacity = '0';
-      popupEl.style.pointerEvents = 'none';
-    }
-
-    // Legend + popup both fade with scroll
-    function updateSideVisibility() {
-      if (isFullscreenView) {
-        globeIsVisible = true;
-        legendEl.style.opacity = '1';
-        legendEl.style.pointerEvents = '';
-        return;
-      }
-      var r = container.getBoundingClientRect();
-      var vh = window.innerHeight;
-      var visiblePx = Math.max(Math.min(r.bottom, vh) - Math.max(r.top, 0), 0);
-      var opacity = Math.min(visiblePx / (r.height * 0.35), 1);
-      globeIsVisible = opacity > 0.05;
-      legendEl.style.opacity = opacity;
-      legendEl.style.pointerEvents = globeIsVisible ? '' : 'none';
-      if (currentPopupData) {
-        popupEl.style.opacity = String(opacity);
-        popupEl.style.pointerEvents = globeIsVisible ? 'auto' : 'none';
-      }
-      if (!globeIsVisible) { hidePopup(); dropOpen = false; dropPanel.style.display = 'none'; trigArrow.style.transform = ''; }
-    }
-    window.addEventListener('scroll', updateSideVisibility, { passive: true });
-    updateSideVisibility();
+    function showPopup(p) { if (explorer) explorer.hover(p); }
 
     // ── Raycaster ────────────────────────────────────────────────────────────
     var raycaster = new THREE.Raycaster();
@@ -743,7 +525,7 @@
 
     var orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    var app = { scene: scene, camera: camera, controls: orbitControls, renderer: renderer };
+    var app = { scene: scene, camera: camera, controls: orbitControls, renderer: renderer, showProjects: isFullscreenView };
     setup(app);
     if (isFullscreenView) {
       explorer = window.createGlobeExplorer({
@@ -772,40 +554,20 @@
       });
     }
 
-    // #globe-wrap is a square (aspect-ratio:1/1) sized off a CSS
-    // min(Xpx, Yvw) formula.
-    var SIZES = {
-      globe: { px: 700, vw: 1 }
-    };
-    // The section's reserved height, kept at its original value so the
-    // globe's vertical position on the page stays exactly where it was.
-    var SECTION_MIN_HEIGHT = { px: 1000, vw: 0.95 };
-    function clampedSize(spec) {
-      return Math.min(spec.px, window.innerWidth * spec.vw);
-    }
-
-    container.style.position = 'relative';
-
-    // Reserve enough height on #globe-section (the box's parent) so the
-    // section itself never changes size as #globe-wrap grows/shrinks.
-    globeSection.style.position = 'relative';
-    function syncSectionMinHeight() {
-      if (isFullscreenView) return;
-      globeSection.style.minHeight = clampedSize(SECTION_MIN_HEIGHT) + 'px';
-    }
-    syncSectionMinHeight();
-
     function syncCanvasToContainer() {
       W = container.clientWidth;
       H = container.clientHeight || W;
-      // #globe-wrap is square by CSS (aspect-ratio:1/1), but while the
-      // browser window is actively being resized, clientWidth/clientHeight
-      // can briefly disagree for a frame or two before layout catches up.
-      // Use the real measured ratio rather than assuming 1 — assuming it
-      // is what stretched the globe into an oval during a live resize.
+      if (!W || !H) return;
       camera.aspect = W / H;
       camera.updateProjectionMatrix();
-      renderer.setSize(W, H);
+      var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      if (renderer.getPixelRatio() !== pixelRatio) renderer.setPixelRatio(pixelRatio);
+      if (els.globePoints) els.globePoints.material.uniforms.pixelRatio.value = pixelRatio;
+      // Preserve the canvas's percentage CSS sizing; update its drawing buffer
+      // and render immediately, including when a container changes without a
+      // window resize. No CSS transition delays the embedded globe's resize.
+      renderer.setSize(W, H, false);
+      renderer.render(scene, camera);
     }
 
     // Fullscreen re-parents and resizes the canvas after renderer creation.
@@ -822,9 +584,6 @@
     }
     loop();
 
-    window.addEventListener('resize', function () {
-      syncCanvasToContainer();
-      syncSectionMinHeight();
-    });
+    window.addEventListener('resize', syncCanvasToContainer);
   });
 })();
