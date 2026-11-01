@@ -402,7 +402,7 @@
     grps.globe.add(grps.points);
 
     var cortexMarkers = CORTEX_PROJECTS.map(function (p) {
-      return { name: p.title, latitude: p.lat, longitude: p.lon, description: p.description, link: p.link, theme: p.theme };
+      return Object.assign({}, p, { name: p.title, latitude: p.lat, longitude: p.lon });
     });
     new Markers(cortexMarkers);
     grps.globe.add(grps.markers);
@@ -433,6 +433,7 @@
     if (!container) return;
     var globeSection = document.getElementById('globe-section');
     var isFullscreenView = window.location.hash === '#globe-fullscreen';
+    var explorer = null;
 
     var W = container.clientWidth;
     var H = container.clientHeight || W;
@@ -641,16 +642,12 @@
     // ── Full-screen view: hide everything else on the page, showing only
     // the globe and the filter-by-topic control ───────────────────────────
     if (isFullscreenView) {
-      // Walk up from #globe-section to <body>, hiding every sibling along
-      // the way so nothing else on the page renders.
-      (function isolate(el) {
-        var parent = el.parentElement;
-        if (!parent || parent === document.documentElement) return;
-        Array.prototype.forEach.call(parent.children, function (sibling) {
-          if (sibling !== el) sibling.style.display = 'none';
-        });
-        isolate(parent);
-      })(globeSection);
+      // Put the explorer directly in the viewport, outside the page's layout.
+      document.body.appendChild(globeSection);
+      Array.prototype.forEach.call(document.body.children, function (child) {
+        if (child !== globeSection && child.tagName !== 'SCRIPT') child.style.display = 'none';
+      });
+      document.body.classList.add('globe-fullscreen');
 
       // Minimal header: same site-header styling, title only, no nav links
       var fsHeader = document.createElement('header');
@@ -665,36 +662,13 @@
       fsHeader.appendChild(fsHeaderInner);
       document.body.insertBefore(fsHeader, document.body.firstChild);
 
-      document.documentElement.style.height = '100%';
-      document.body.style.margin = '0';
-      document.body.style.height = '100%';
-      document.body.style.background = '#000';
-      document.body.style.display = 'flex';
-      document.body.style.flexDirection = 'column';
-      document.body.style.alignItems = 'stretch';
-      document.body.style.justifyContent = 'flex-start';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      document.body.style.width = '100vw';
+      legendEl.style.display = 'none';
+      popupEl.style.display = 'none';
 
-      globeSection.style.minHeight = '0';
-      globeSection.style.width = '100vw';
-      globeSection.style.flex = '1 1 auto';
-      globeSection.style.display = 'flex';
-      globeSection.style.alignItems = 'flex-start';
-      globeSection.style.justifyContent = 'center';
-      globeSection.style.paddingTop = '27vh';
-
-      container.style.width = 'min(92vw, 92vh)';
-      container.style.height = 'min(92vw, 92vh)';
-      legendEl.style.top = '20rem';
-
-      fullscreenBtn.style.display = 'none';
-      spinRow.style.display = 'none';
-      popupEl.style.display = 'block';
     }
 
     function showPopup(p) {
+      if (explorer) { explorer.hover(p); return; }
       if (!globeIsVisible) return;
       currentPopupData = p;
       popupTheme.textContent = p.theme || '';
@@ -738,33 +712,65 @@
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2(-999, -999);
 
-    container.addEventListener('mousemove', function (e) {
+    function markerAtEvent(e) {
       var rect = container.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-      mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
-      var targets = els.markerHits.map(function (h) { return h.mesh; });
-      // The solid surface also blocks interaction with far-side markers.
-      targets.push(els.globe);
-      var hits = raycaster.intersectObjects(targets);
-      anims.hoveredMarkerIndex = -1;
-      if (hits.length > 0) {
-        for (var k = 0; k < els.markerHits.length; k++) {
-          if (els.markerHits[k].mesh === hits[0].object && els.markerHits[k].group.visible) {
-            anims.hoveredMarkerIndex = k;
-            showPopup(els.markerHits[k].data);
-            break;
-          }
-        }
-      } else {
-        anims.hoveredMarkerIndex = -1;
-      }
+      // Hidden markers must not intercept the ray before a visible project.
+      var visible = els.markerHits.filter(function (h) { return h.group.visible; });
+      var hits = raycaster.intersectObjects(visible.map(function (h) { return h.mesh; }).concat([els.globe]));
+      if (!hits.length || hits[0].object === els.globe) return null;
+      return visible.find(function (h) { return h.mesh === hits[0].object; }) || null;
+    }
+    container.addEventListener('mousemove', function (e) {
+      var hit = markerAtEvent(e);
+      anims.hoveredMarkerIndex = hit ? els.markerHits.indexOf(hit) : -1;
+      container.style.cursor = hit ? 'pointer' : 'grab';
+      if (hit) showPopup(hit.data);
+      else if (explorer) explorer.hover(null);
+    });
+    container.addEventListener('mouseleave', function () { if (explorer) explorer.hover(null); });
+    // Ignore drag gestures when deciding whether a click selects a project.
+    var pointerStart = null;
+    container.addEventListener('pointerdown', function (e) { pointerStart = { x: e.clientX, y: e.clientY }; });
+    container.addEventListener('pointerup', function (e) {
+      if (!explorer || !pointerStart || Math.hypot(e.clientX - pointerStart.x, e.clientY - pointerStart.y) > 5) return;
+      var hit = markerAtEvent(e);
+      if (hit) explorer.select(hit.data);
+      pointerStart = null;
     });
 
     var orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
 
     var app = { scene: scene, camera: camera, controls: orbitControls, renderer: renderer };
     setup(app);
+    if (isFullscreenView) {
+      explorer = window.createGlobeExplorer({
+        section: globeSection,
+        container: container,
+        isSpinning: function () { return anims.spinEnabled; },
+        setSpin: function (enabled) {
+          anims.spinEnabled = enabled;
+          anims.targetSpeed = enabled ? 0.0025 : 0;
+        },
+        filter: function (ids) {
+          els.markerHits.forEach(function (h) { h.group.visible = ids.has(h.data.id); });
+          anims.hoveredMarkerIndex = -1;
+        },
+        highlight: function (id) {
+          anims.hoveredMarkerIndex = els.markerHits.findIndex(function (h) { return h.data.id === id; });
+        },
+        focus: function (p) {
+          var position = coordToPos(p.lat, p.lon, cfg.sizes.globe);
+          grps.globe.rotation.y = -Math.atan2(position.x, position.z);
+          camera.position.set(0, 0, camera.position.distanceTo(orbitControls.target));
+          orbitControls.target.set(0, 0, 0);
+          orbitControls.update();
+          anims.spinEnabled = false; anims.targetSpeed = 0; anims.rotateSpeed = 0;
+        }
+      });
+    }
 
     // #globe-wrap is a square (aspect-ratio:1/1) sized off a CSS
     // min(Xpx, Yvw) formula.
@@ -800,6 +806,12 @@
       camera.aspect = W / H;
       camera.updateProjectionMatrix();
       renderer.setSize(W, H);
+    }
+
+    // Fullscreen re-parents and resizes the canvas after renderer creation.
+    syncCanvasToContainer();
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(syncCanvasToContainer).observe(container);
     }
 
     function loop() {
