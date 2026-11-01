@@ -25,7 +25,7 @@
 <!--------------------------------------------
   BODY
   -------------------------------------------->
-<body>
+<body class="cortex-page">
 
   <!--------------------------------------------
     HEADER
@@ -101,7 +101,7 @@
 
 
     <!-- WHAT IS CORTEX -->
-    <section id="about" class="section reveal" style="padding-top:4rem;">
+    <section id="about" class="section reveal">
       <div class="container">
         <h2 class="section-title">WHAT IS CORTEX</h2>
         <p class="section-intro">Cortex is a living atlas of technical innovation shaped by the world's needs.</p>
@@ -114,19 +114,19 @@
           <article class="card overview-card reveal">
             <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>02</p>
             <h3>CONNECT <br> WITH ORGS</h3>
-            <p>Discover the organizations driving change — from global institutions to grassroots collectives — and learn how to support their missions.</p>
+            <p>Discover the organizations driving change and learn how to support their missions.</p>
           </article>
           <article class="card overview-card reveal">
             <p class="overview-meta"><span class="overview-line" aria-hidden="true"></span>03</p>
-            <h3>ACT <br> AT HOME</h3>
-            <p>Equip yourself with environmental sensing tools to monitor air, water, and soil quality in your own neighborhood.</p>
+            <h3>DISCOVER <br> LATEST NEWS</h3>
+            <p>Equip yourself with recommended newsletters to stay up to date on industry changes.</p>
           </article>
         </div>
       </div>
     </section>
 
     <!-- VIEW ALL PROJECTS -->
-    <section id="projects" class="section" style="position:relative;padding-top:17rem;z-index:10;">
+    <section id="projects" class="section" style="position:relative;z-index:10;">
       <div class="container" style="padding-bottom:0;">
         <h2 class="section-title">VIEW ALL PROJECTS</h2>
         <p class="section-intro">Open the full-screen globe to explore projects around the world.</p>
@@ -148,15 +148,16 @@
           <a class="cortex-fullscreen-link" href="index.html#globe-fullscreen" target="_blank" rel="noopener">Open in full screen ↗</a>
         </div>
       </div>
-    </section>
 
     <!-- THREE.JS GLOBE -->
-    <div id="globe-section" style="position:relative;width:100%;display:flex;justify-content:center;align-items:center;margin-top:0;transform:translateY(-250px);z-index:1">
+    <div id="globe-section" style="position:relative;width:100%;display:flex;justify-content:center;align-items:center;margin-top:0;z-index:1">
       <div id="globe-wrap" style="position:relative;width:min(700px,92vw);flex-shrink:0;margin:0 auto;aspect-ratio:1/1;"></div>
     </div>
 
+    </section>
+
     <!-- CONSERVATION ORGANIZATIONS -->
-    <section id="organizations" class="section reveal" style="display:none;margin-top:-200px;">
+    <section id="organizations" class="section reveal" style="display:none;">
       <div class="container">
         <h2 class="section-title">CONSERVATION ORGANIZATIONS</h2>
         <p class="section-intro">Meet the institutions and grassroots collectives driving global conservation — from policy reform to hands-on habitat restoration.</p>
@@ -232,34 +233,31 @@
     </section>
 
     <!-- GET THE LATEST NEWS -->
-    <section id="shop" class="section reveal" style="margin-top:-175px;margin-bottom:200px">
+    <section id="shop" class="section reveal">
       <div class="container">
         <h2 class="section-title">GET THE LATEST NEWS</h2>
-        <p class="section-intro">Equip your home lab with tools for hands-on discovery. Measure, experiment, and understand the natural world around you.</p>
+        <p class="section-intro">A few recommended reads for the latest in technology, AI research, and engineering.</p>
 
         <div class="product-grid">
           <article class="product-card reveal">
-            <span class="product-category">AIR</span>
-            <h3>Air Quality Monitor</h3>
-            <p>Track indoor air quality with real-time measurements of particulate matter, carbon dioxide, and humidity.</p>
-            <div class="product-price">From $49</div>
-            <a class="product-buy-link" href="#" target="_blank">Shop ↗</a>
+            <span class="product-category">INDUSTRY</span>
+            <h3>TLDR</h3>
+            <p>A daily roundup of technology, startup, and programming stories, with concise summaries and links to explore further.</p>
+            <a class="product-buy-link" href="https://tldr.tech/" target="_blank" rel="noopener noreferrer">Read TLDR ↗</a>
           </article>
 
           <article class="product-card reveal">
-            <span class="product-category">ENERGY</span>
-            <h3>Solar Sensor Kit</h3>
-            <p>Build a solar-powered monitoring station to measure sunlight, temperature, and environmental conditions.</p>
-            <div class="product-price">From $89</div>
-            <a class="product-buy-link" href="#" target="_blank">Shop ↗</a>
+            <span class="product-category">RESEARCH</span>
+            <h3>AI, But Simple</h3>
+            <p>Keep up with AI research through a weekly newsletter that makes complex ideas easier to understand with visual explanations.</p>
+            <a class="product-buy-link" href="https://www.aibutsimple.com/" target="_blank" rel="noopener noreferrer">Explore the research ↗</a>
           </article>
 
           <article class="product-card reveal">
-            <span class="product-category">SOIL</span>
-            <h3>Soil Science Kit</h3>
-            <p>Investigate soil composition, acidity, and nutrient levels to discover what makes healthy ecosystems thrive.</p>
-            <div class="product-price">From $28</div>
-            <a class="product-buy-link" href="#" target="_blank">Shop ↗</a>
+            <span class="product-category">ENGINEERING</span>
+            <h3>IEEE Spectrum</h3>
+            <p>Explore emerging technologies and the engineering behind them, from robotics and computing to energy and biomedical innovation.</p>
+            <a class="product-buy-link" href="https://spectrum.ieee.org/" target="_blank" rel="noopener noreferrer">Read IEEE Spectrum ↗</a>
           </article>
         </div>
       </div>

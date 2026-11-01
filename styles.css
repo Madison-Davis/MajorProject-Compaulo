@@ -1687,3 +1687,12 @@ body.modal-open {
 }
 
 .whiteboard-btn:hover { background: #000000; }
+/* Portfolio: a single 250px gap between complete sections. Preserve the
+   hero's internal spacing and the showcase's own viewport-sized canvas. */
+.portfolio-page main { display: flex; flex-direction: column; padding-bottom: 200px; }
+.portfolio-page main > section { flex-shrink: 0; margin: 0; }
+.portfolio-page main > section:not(#home) { padding: 0; }
+.portfolio-page main > section ~ section { margin-top: 250px; }
+.portfolio-page main > section .section-title { margin-top: 0; }
+/* The portfolio project tabs belong directly beneath the iPhone showcase. */
+.portfolio-page main > #iphone-showcase + script + #projects { margin-top: 0; }
