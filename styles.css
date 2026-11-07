@@ -861,6 +861,15 @@ p {
   white-space: nowrap;
 }
 
+.course-subtopic + .course-subtopic {
+  margin-top: 2rem;
+}
+
+.course-subtopic-title {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
 /* Course cards emitted by codex/scripts/build-codex.sh. */
 .course-grid {
   display: grid;

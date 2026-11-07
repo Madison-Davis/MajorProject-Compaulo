@@ -1,0 +1,249 @@
+import html
+import re
+import sys
+from pathlib import Path
+
+codex_dir = Path(sys.argv[1])
+source_dir = codex_dir / 'codex-content' / 'Learn' / 'Learn - Career'
+template_path = codex_dir / 'pages' / 'template.html'
+output_dir = codex_dir / 'pages'
+index_path = codex_dir / 'index.html'
+categories = ['Tech', 'Sciences', 'Business']
+
+if not source_dir.is_dir():
+    raise SystemExit(f'ERROR: Source folder not found: {source_dir}')
+
+def is_published(raw):
+    # Only an explicitly enabled top-level Obsidian checkbox publishes a note.
+    match = re.match(r'\A\ufeff?---[ \t]*\n(.*?)\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
+    return bool(match and re.search(
+        r'^compaulo-codex[ \t]*:[ \t]*true[ \t]*(?:#.*)?$',
+        match.group(1), re.MULTILINE | re.IGNORECASE
+    ))
+
+def discover_notes():
+    notes = []
+    slugs = set()
+    for category in categories:
+        folder = source_dir / f'Learn - {category}'
+        if not folder.is_dir():
+            raise SystemExit(f'ERROR: Category folder not found: {folder}')
+        for path in sorted(folder.rglob('*.md')):
+            raw = path.read_text(encoding='utf-8-sig')
+            if not is_published(raw):
+                continue
+            subtopic, separator, title = path.stem.partition(' - ')
+            if not separator or not subtopic.strip() or not title.strip():
+                raise SystemExit(f'Public note must be named SubTopic - File name.md: {path}')
+            slug = slugify(category + '-' + path.stem)
+            if slug in slugs or slug == 'template':
+                raise SystemExit(f'Duplicate page URL for: {path}')
+            slugs.add(slug)
+            notes.append((path, raw, category, subtopic.strip(), title.strip(), slug + '.html'))
+    return notes
+
+def slugify(name):
+    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+
+def strip_frontmatter(raw):
+    match = re.match(r'\A---\s*\n.*?\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
+    return raw[match.end():] if match else raw
+
+def clean_line(line):
+    line = line.strip()
+    if line.startswith('**') and line.endswith('**') and len(line) >= 4:
+        line = line[2:-2].strip()
+    return line
+
+def parse_chapters(body):
+    chapters = []
+    chapter = None
+    section = None
+    pending = []
+
+    def flush():
+        nonlocal pending
+        text = ' '.join(x.strip() for x in pending if x.strip())
+        if text and section is not None:
+            section['paragraphs'].append(text)
+        pending = []
+
+    for original in body.splitlines():
+        line = clean_line(original)
+
+        # Four hashes = chapter; five hashes = subsection.
+        if line.startswith('##### '):
+            flush()
+            section = {
+                'subtitle': line[6:].strip(),
+                'paragraphs': []
+            }
+            if chapter is not None:
+                chapter['sections'].append(section)
+
+        elif line.startswith('#### '):
+            flush()
+            section = {'subtitle': None, 'paragraphs': []}
+            chapter = {
+                'title': line[5:].strip(),
+                'sections': [section]
+            }
+            chapters.append(chapter)
+
+        elif (
+            not line
+            or line == '---'
+            or re.fullmatch(r'##\s*<wbr\s*/?>', line, re.IGNORECASE)
+        ):
+            flush()
+
+        elif chapter is not None:
+            pending.append(line)
+
+    flush()
+    return chapters
+
+template = template_path.read_text(encoding='utf-8')
+output_dir.mkdir(parents=True, exist_ok=True)
+
+notes = discover_notes()
+entries = {category: {} for category in categories}
+# Generated pages are disposable; remove stale pages when compaulo-codex is unchecked.
+for old_page in output_dir.glob('*.html'):
+    if old_page.name != 'template.html':
+        old_page.unlink()
+
+for md_file, raw, category, subtopic, title, output_name in notes:
+    entries[category].setdefault(subtopic, []).append((title, output_name))
+    body = strip_frontmatter(raw)
+    chapters = parse_chapters(body)
+    if not chapters:
+        chapters = [{'title': title, 'sections': [{'subtitle': None, 'paragraphs': [body.strip()]}]}]
+
+    page_title = title.upper()
+
+    toc = ''
+    chapter_html = ''
+
+    for i, ch in enumerate(chapters):
+        active = ' is-active' if i == 0 else ''
+        toc += (
+            f'        <button class="toc-link{active}" '
+            f'data-target="ch-{i+1}">\n'
+            f'          <span class="toc-num">{i+1}</span>\n'
+            f'          <span>{html.escape(ch["title"])}</span>\n'
+            f'        </button>\n'
+        )
+
+        body_html = ''
+        for sec in ch['sections']:
+            if sec['subtitle']:
+                body_html += (
+                    '\n          <h3 class="tpl-chapter-subtitle">'
+                    + html.escape(sec['subtitle'])
+                    + '</h3>'
+                )
+
+            for paragraph in sec['paragraphs']:
+                body_html += (
+                    '\n          <p>'
+                    + html.escape(paragraph)
+                    + '</p>'
+                )
+
+        chapter_html += (
+            f'      <div class="tpl-chapter{active}" id="ch-{i+1}">\n'
+            f'        <div class="tpl-chapter-header">\n'
+            f'          <p class="kicker">CHAPTER {i+1}</p>\n'
+            f'          <h2 class="tpl-chapter-title">'
+            f'{html.escape(ch["title"])}</h2>\n'
+            f'        </div>\n'
+            f'        <div class="tpl-chapter-body">{body_html}\n'
+            f'        </div>\n'
+            f'      </div>\n\n'
+        )
+
+    page = template
+    page = re.sub(
+        r'<title>[^<]*</title>',
+        lambda m: f'<title>{html.escape(page_title)} — Learn a Bit</title>',
+        page,
+        count=1
+    )
+    page = re.sub(
+        r'(<h3 class="tpl-content-title">)[^<]*(</h3>)',
+        lambda m: m.group(1) + html.escape(page_title) + m.group(2),
+        page,
+        count=1
+    )
+    page = re.sub(
+        r'(<nav>).*?(</nav>)',
+        lambda m: m.group(1) + '\n' + toc + '      ' + m.group(2),
+        page,
+        count=1,
+        flags=re.DOTALL
+    )
+
+    start = page.find('<div class="tpl-chapter')
+    end = page.rfind('</main>')
+
+    if start != -1 and end != -1 and start < end:
+        page = page[:start] + chapter_html + '\n    ' + page[end:]
+
+    (output_dir / output_name).write_text(page, encoding='utf-8')
+    print(f'  {md_file.name} -> {output_name}')
+
+print(f'Generated {len(notes)} HTML page(s).')
+
+index = index_path.read_text(encoding='utf-8')
+
+for category in categories:
+    start_marker = f'<!-- AUTO-GENERATED: {category.upper()} START -->'
+    end_marker = f'<!-- AUTO-GENERATED: {category.upper()} END -->'
+
+    start = index.find(start_marker)
+    end = index.find(end_marker)
+
+    if start == -1 or end == -1 or end < start:
+        raise SystemExit(
+            f'Missing markers for {category}. '
+            f'Add the START and END comments inside its course-grid.'
+        )
+
+    groups = []
+    for subtopic, pages in sorted(entries[category].items(), key=lambda item: item[0].casefold()):
+        cards = '\n'.join(
+            f'<a class="course-card" href="pages/{html.escape(filename, quote=True)}">'
+            f'<h3>{html.escape(title)}</h3></a>'
+            for title, filename in sorted(pages, key=lambda item: item[0].casefold())
+        )
+        groups.append(
+            '<section class="course-subtopic">'
+            f'<h2 class="course-subtopic-title">{html.escape(subtopic)}</h2>'
+            f'<div class="course-grid">{cards}</div></section>'
+        )
+    cards = '\n'.join(groups)
+
+    if not cards:
+        cards = (
+            f'<p class="course-empty">No {category} pages yet.</p>'
+        )
+
+    replacement = (
+        start_marker + '\n'
+        + cards + '\n'
+        + '                  ' + end_marker
+    )
+
+    index = (
+        index[:start]
+        + replacement
+        + index[end + len(end_marker):]
+    )
+
+index_path.write_text(index, encoding='utf-8')
+
+for category in categories:
+    print(f'  {category}: {sum(len(pages) for pages in entries[category].values())} page(s)')
+
+print('Updated index.html.')

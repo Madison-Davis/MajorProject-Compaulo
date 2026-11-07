@@ -14,7 +14,32 @@ This document describes how content flows from the Obsidian vault in
 
 ## How to Add More Pages
 
-1. Step 1: Notes are edited in the `compaulo-codex` Obsidian vault. All notes must follow the format Compaulo - Title.md and be located within Learn - Compaulo.
-2. Step 2: Open the `MajorProject-Compaulo-Codex` repo.  It'll show the changes you made in Obsidian.
-2. Step 3: Push the `MajorProject-Compaulo-Codex` repo to main.
-3. Step 4: `MajorProject-Compaulo` will be notified of this change and update its pages.
+1. Edit notes in the `compaulo-codex` Obsidian vault under `Learn/Learn - Career/`.
+2. Put each note in `Learn - Tech`, `Learn - Sciences`, or `Learn - Business`. These folders map to the three main Codex categories; nested folders are supported.
+3. Name the note `SubTopic - File name.md`. For example, `Learn/Learn - Career/Learn - Tech/AIML - RL.md` appears under **Tech → AIML → RL**. Other prefixes, such as `Software` and `Hardware`, create their own subsections.
+4. Add an Obsidian checkbox property named `compaulo-codex` and enable it:
+
+   ```yaml
+   ---
+   compaulo-codex: true
+   ---
+   ```
+
+   Only notes with `compaulo-codex: true` are published. Missing, blank, or false values keep a note private. Category tags and the old `Compaulo - ` filename prefix are no longer used.
+5. Push the vault changes to `MajorProject-Compaulo-Codex` on `main`. Its notification triggers this site's build and deployment.
+
+The build groups and sorts public notes by subtopic and title. Unchecking `compaulo-codex` removes the generated page on the next build. Page URLs include the category and full note name to distinguish matching titles across categories. Duplicate URLs within a category cause the build to fail rather than overwrite a page.
+
+The deployment artifact excludes the source vault. The existing note renderer uses `####` headings for chapters and `#####` headings for subsections. Notes without chapter headings display their body as a single chapter.
+
+To build locally with the vault checked out:
+
+```sh
+bash codex/scripts/build-codex.sh
+```
+
+To verify publication filtering and grouping using temporary sample notes:
+
+```sh
+python3 -m unittest discover -s codex/scripts -p 'test_*.py'
+```
