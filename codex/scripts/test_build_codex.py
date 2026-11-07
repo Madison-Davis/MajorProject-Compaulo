@@ -207,7 +207,7 @@ More content.
                     if tag == 'button' and attrs.get('class') == 'toc-section-link']
         self.assertEqual(len(panels), 4)
         self.assertEqual(sum('open' in panel for panel in panels), 1)
-        self.assertEqual(panels[0]['name'], panels[1]['name'])
+        self.assertTrue(all('name' not in panel for panel in panels))
         self.assertEqual({panel['id'] for panel in panels},
                          {control['aria-controls'] for control in controls})
         self.assertEqual(sum(control['aria-expanded'] == 'true' for control in controls), 1)

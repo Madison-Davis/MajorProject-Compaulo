@@ -172,7 +172,7 @@ for md_file, raw, category, subtopic, title, output_name in notes:
                 f'{html.escape(section["title"])}</button>\n'
             )
             body_html += (
-                f'<details class="tpl-section" id="{section_id}" name="{chapter_id}-sections"'
+                f'<details class="tpl-section" id="{section_id}"'
                 + (' open' if opened else '') + '>'
                 f'<summary><h3 class="tpl-chapter-subtitle">{html.escape(section["title"])}</h3></summary>'
                 f'<div class="tpl-section-body">{render_body(section["tokens"])}</div></details>\n'

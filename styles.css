@@ -1491,15 +1491,16 @@ p {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  margin: 0.25rem 0 0.75rem 1.4rem;
+  margin: 0 0 0 2rem;
   padding-left: 0.6rem;
   border-left: 1px solid var(--color-border);
 }
 .toc-subsections[hidden] { display: none; }
 .toc-section-link {
-  padding: 0.5rem;
+  appearance: none;
+  padding: 0.5rem 0.6rem;
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: 0;
   background: transparent;
   color: var(--color-text-muted);
   font: inherit;
@@ -1508,11 +1509,18 @@ p {
   cursor: pointer;
 }
 .toc-section-link:hover, .toc-section-link.is-active {
-  color: var(--color-accent-strong);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
+  background: transparent;
 }
 .tpl-section { border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; }
-.tpl-section summary { cursor: pointer; }
+.tpl-section { box-sizing: border-box; }
+.tpl-section summary { cursor: pointer; list-style: none; }
+.tpl-section summary::-webkit-details-marker { display: none; }
+.tpl-section summary::marker { content: ''; }
+.tpl-section summary:focus-visible, .toc-section-link:focus-visible {
+  outline: 1px solid var(--color-text-muted);
+  outline-offset: 3px;
+}
 .tpl-section summary h3 { display: inline; }
 .tpl-section-body {
   display: flex;
