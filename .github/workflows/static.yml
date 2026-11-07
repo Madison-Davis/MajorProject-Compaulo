@@ -37,6 +37,8 @@ jobs:
         run: |
           git -C codex/codex-content fetch origin main
           git -C codex/codex-content checkout origin/main
+      - name: Install Codex renderer
+        run: python3 -m pip install -r codex/scripts/requirements.txt
       - name: Build Codex
         run: bash codex/scripts/build-codex.sh
       - name: Setup Pages

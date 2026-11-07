@@ -95,6 +95,51 @@ class BuildCodexTest(unittest.TestCase):
         self.assertIn('A &amp; B', page)
         self.assertIn('A body without chapter headings.', page)
 
+    def test_markdown_and_math_preserve_structure(self):
+        note = self.note('AIML - RL.md')
+        note.write_text(r'''---
+compaulo-codex: true
+---
+#### MDPs and Policies
+##### Foundational Terminology
+A **model** with [[Markov Decision Process|MDP]] and $s_{H-1}$.
+- $\mu$: initial distribution
+- States
+  - Nested state
+
+1. First step
+2. Second step
+
+$$
+V_h(s) = \sum_a \pi_h(a|s) Q_h(s,a)
+$$
+
+```text
+#### This is code, not a chapter
+$s_0$
+```
+
+<script>alert('unsafe')</script>
+#### Next Chapter
+### A Markdown heading
+More content.
+''')
+        self.build()
+        page = (self.codex / 'pages/tech-aiml-rl.html').read_text()
+        self.assertIn('<strong>model</strong>', page)
+        self.assertIn('with MDP and', page)
+        self.assertGreaterEqual(page.count('<ul>'), 2)
+        self.assertIn('<ol>', page)
+        self.assertIn(r'\(s_{H-1}\)', page)
+        self.assertIn(r'\[V_h(s) = \sum_a', page)
+        self.assertNotIn('<em>H-1</em>', page)
+        self.assertIn('<h3 class="tpl-chapter-subtitle">Foundational Terminology</h3>', page)
+        self.assertIn('<h3>A Markdown heading</h3>', page)
+        self.assertEqual(page.count('class="toc-link'), 2)
+        self.assertIn('#### This is code, not a chapter\n$s_0$', page)
+        self.assertNotIn("<script>alert('unsafe')</script>", page)
+        self.assertIn('mathjax@3.2.2', page)
+
 
 if __name__ == '__main__':
     unittest.main()

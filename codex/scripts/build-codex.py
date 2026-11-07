@@ -3,6 +3,9 @@ import re
 import sys
 from pathlib import Path
 
+from markdown_it import MarkdownIt
+from mdit_py_plugins.dollarmath import dollarmath_plugin
+
 codex_dir = Path(sys.argv[1])
 
 
@@ -69,59 +72,41 @@ def strip_frontmatter(raw):
     match = re.match(r'\A---\s*\n.*?\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
     return raw[match.end():] if match else raw
 
-def clean_line(line):
-    line = line.strip()
-    if line.startswith('**') and line.endswith('**') and len(line) >= 4:
-        line = line[2:-2].strip()
-    return line
+def render_math(content, options):
+    opening, closing = (r'\[', r'\]') if options['display_mode'] else (r'\(', r'\)')
+    return opening + html.escape(content) + closing
 
-def parse_chapters(body):
+
+markdown = MarkdownIt('commonmark', {'html': False, 'breaks': True}).enable('table')
+markdown.use(dollarmath_plugin, renderer=render_math, allow_labels=False)
+
+
+def parse_chapters(body, title):
+    # Parse before splitting so headings inside code/math blocks stay untouched.
+    tokens = markdown.parse(body)
+    starts = [i for i, token in enumerate(tokens)
+              if token.type == 'heading_open' and token.tag == 'h4' and token.level == 0]
     chapters = []
-    chapter = None
-    section = None
-    pending = []
-
-    def flush():
-        nonlocal pending
-        text = ' '.join(x.strip() for x in pending if x.strip())
-        if text and section is not None:
-            section['paragraphs'].append(text)
-        pending = []
-
-    for original in body.splitlines():
-        line = clean_line(original)
-
-        # Four hashes = chapter; five hashes = subsection.
-        if line.startswith('##### '):
-            flush()
-            section = {
-                'subtitle': line[6:].strip(),
-                'paragraphs': []
-            }
-            if chapter is not None:
-                chapter['sections'].append(section)
-
-        elif line.startswith('#### '):
-            flush()
-            section = {'subtitle': None, 'paragraphs': []}
-            chapter = {
-                'title': line[5:].strip(),
-                'sections': [section]
-            }
-            chapters.append(chapter)
-
-        elif (
-            not line
-            or line == '---'
-            or re.fullmatch(r'##\s*<wbr\s*/?>', line, re.IGNORECASE)
-        ):
-            flush()
-
-        elif chapter is not None:
-            pending.append(line)
-
-    flush()
+    for number, start in enumerate(starts):
+        end = starts[number + 1] if number + 1 < len(starts) else len(tokens)
+        chapters.append({'title': tokens[start + 1].content, 'tokens': tokens[start + 3:end]})
+    if not chapters:
+        chapters = [{'title': title, 'tokens': tokens}]
     return chapters
+
+
+def render_body(tokens):
+    for token in tokens:
+        if token.type in ('heading_open', 'heading_close') and token.tag == 'h5':
+            token.tag = 'h3'
+            if token.type == 'heading_open':
+                token.attrSet('class', 'tpl-chapter-subtitle')
+        # Unpublished Obsidian references display their label without broken links.
+        for child in token.children or []:
+            if child.type == 'text':
+                child.content = re.sub(r'\[\[([^]\n]+)\]\]',
+                                       lambda m: m.group(1).split('|')[-1], child.content)
+    return markdown.renderer.render(tokens, markdown.options, {})
 
 template = template_path.read_text(encoding='utf-8')
 output_dir.mkdir(parents=True, exist_ok=True)
@@ -136,9 +121,7 @@ for old_page in output_dir.glob('*.html'):
 for md_file, raw, category, subtopic, title, output_name in notes:
     entries[category].setdefault(subtopic, []).append((title, output_name))
     body = strip_frontmatter(raw)
-    chapters = parse_chapters(body)
-    if not chapters:
-        chapters = [{'title': title, 'sections': [{'subtitle': None, 'paragraphs': [body.strip()]}]}]
+    chapters = parse_chapters(body, title)
 
     page_title = title.upper()
 
@@ -155,21 +138,7 @@ for md_file, raw, category, subtopic, title, output_name in notes:
             f'        </button>\n'
         )
 
-        body_html = ''
-        for sec in ch['sections']:
-            if sec['subtitle']:
-                body_html += (
-                    '\n          <h3 class="tpl-chapter-subtitle">'
-                    + html.escape(sec['subtitle'])
-                    + '</h3>'
-                )
-
-            for paragraph in sec['paragraphs']:
-                body_html += (
-                    '\n          <p>'
-                    + html.escape(paragraph)
-                    + '</p>'
-                )
+        body_html = render_body(ch['tokens'])
 
         chapter_html += (
             f'      <div class="tpl-chapter{active}" id="ch-{i+1}">\n'

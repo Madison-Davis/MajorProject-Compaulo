@@ -30,11 +30,12 @@ This document describes how content flows from the Obsidian vault in
 
 The build groups and sorts public notes by subtopic and title. Unchecking `compaulo-codex` removes the generated page on the next build. Page URLs include the category and full note name to distinguish matching titles across categories. Duplicate URLs within a category cause the build to fail rather than overwrite a page.
 
-The deployment artifact excludes the source vault. The existing note renderer uses `####` headings for chapters and `#####` headings for subsections. Notes without chapter headings display their body as a single chapter.
+The deployment artifact excludes the source vault. Notes render Markdown lists, headings, emphasis, code, and tables. Inline `$...$` and display `$$...$$` equations render with MathJax (loaded from a CDN). Obsidian wiki references display as plain labels. The note renderer uses `####` headings for chapters and `#####` headings for subsections. Notes without chapter headings display their body as a single chapter.
 
 To build locally with the vault checked out:
 
 ```sh
+python3 -m pip install -r codex/scripts/requirements.txt
 bash codex/scripts/build-codex.sh
 ```
 
