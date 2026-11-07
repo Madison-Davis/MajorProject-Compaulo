@@ -1106,11 +1106,18 @@ p {
 }
 
 .toc-link.is-active {
-  color: var(--color-accent-strong);
-  background: rgba(255, 255, 255, 0.07);
+  color: var(--color-text-dim);
+  background: transparent;
+}
+
+.toc-link.is-active:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .toc-num {
+  width: 1rem;
+  text-align: center;
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -1491,14 +1498,15 @@ p {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  margin: 0 0 0 2rem;
-  padding-left: 0.6rem;
+  /* Line centers on the 1rem number; labels share the chapter text start. */
+  margin: 0 0 0 1.25rem;
+  padding-left: calc(1.15rem - 1px);
   border-left: 1px solid var(--color-border);
 }
 .toc-subsections[hidden] { display: none; }
 .toc-section-link {
   appearance: none;
-  padding: 0.5rem 0.6rem;
+  padding: 0.5rem 0;
   border: 0;
   border-radius: 0;
   background: transparent;
