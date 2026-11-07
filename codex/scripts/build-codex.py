@@ -35,10 +35,10 @@ index_path = codex_dir / 'index.html'
 categories = ['Tech', 'Sciences', 'Business']
 
 def is_published(raw):
-    # Only an explicitly enabled top-level Obsidian checkbox publishes a note.
+    # Accept an enabled checkbox or the equivalent Obsidian text property.
     match = re.match(r'\A\ufeff?---[ \t]*\n(.*?)\n---[ \t]*(?:\n|$)', raw, re.DOTALL)
     return bool(match and re.search(
-        r'^compaulo-codex[ \t]*:[ \t]*true[ \t]*(?:#.*)?$',
+        r'''^compaulo-codex[ \t]*:[ \t]*(?:true|"true"|'true')[ \t]*(?:#.*)?$''',
         match.group(1), re.MULTILINE | re.IGNORECASE
     ))
 

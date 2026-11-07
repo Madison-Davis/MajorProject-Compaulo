@@ -74,6 +74,13 @@ class BuildCodexTest(unittest.TestCase):
         self.assertTrue((self.codex / 'pages/tech-aiml-rl.html').exists())
         self.assertTrue((self.codex / 'pages/sciences-science-statistics.html').exists())
 
+    def test_quoted_true_properties_publish(self):
+        self.note('AIML - Reinforcement Learning.md', 'compaulo-codex: "true"')
+        self.note('Software - Tools.md', "compaulo-codex: 'true'")
+        self.build()
+        self.assertTrue((self.codex / 'pages/tech-aiml-reinforcement-learning.html').exists())
+        self.assertTrue((self.codex / 'pages/tech-software-tools.html').exists())
+
     def test_missing_career_folder_reports_available_folders(self):
         self.source.rename(self.source.with_name('Other'))
         error = self.build(success=False).stderr

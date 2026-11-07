@@ -25,7 +25,7 @@ This document describes how content flows from the Obsidian vault in
    ---
    ```
 
-   Only notes with `compaulo-codex: true` are published. Missing, blank, or false values keep a note private. Category tags and the old `Compaulo - ` filename prefix are no longer used.
+   Notes with `compaulo-codex: true` are published. Text properties containing `"true"` or `'true'` also work. Missing, blank, or false values keep a note private. Category tags and the old `Compaulo - ` filename prefix are no longer used.
 5. Push the vault changes to `MajorProject-Compaulo-Codex` on `main`. Its notification triggers this site's build and deployment.
 
 The build groups and sorts public notes by subtopic and title. Unchecking `compaulo-codex` removes the generated page on the next build. Page URLs include the category and full note name to distinguish matching titles across categories. Duplicate URLs within a category cause the build to fail rather than overwrite a page.
