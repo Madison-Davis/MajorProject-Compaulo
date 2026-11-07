@@ -95,6 +95,48 @@ class BuildCodexTest(unittest.TestCase):
         self.assertIn('A &amp; B', page)
         self.assertIn('A body without chapter headings.', page)
 
+    def test_editing_separators_are_hidden_except_in_code_and_math(self):
+        note = self.note('AIML - RL.md')
+        note.write_text('''---
+compaulo-codex: true
+---
+#### Introduction
+## <wbr>
+.
+.
+.
+. . .
+...
+--
+---
+Keep this text.
+--
+- Keep this bullet.
+The value is -2. Keep these ... dots in a sentence.
+
+```text
+## <wbr>
+. . .
+--
+```
+
+$$
+x
+--
+$$
+''')
+        self.build()
+        page = (self.codex / 'pages/tech-aiml-rl.html').read_text()
+        body = page.split('<div class="tpl-chapter-body">', 1)[1].split('</main>', 1)[0]
+        self.assertNotIn('<hr', body)
+        self.assertNotIn('<h2>', body)
+        self.assertNotIn('<p>.', body)
+        self.assertIn('<p>Keep this text.</p>', body)
+        self.assertIn('<li>Keep this bullet.', body)
+        self.assertIn('Keep these ... dots in a sentence.', body)
+        self.assertIn('## &lt;wbr&gt;\n. . .\n--', body)
+        self.assertIn('x\n--', body)
+
     def test_markdown_and_math_preserve_structure(self):
         note = self.note('AIML - RL.md')
         note.write_text(r'''---
@@ -134,11 +176,43 @@ More content.
         self.assertIn(r'\[V_h(s) = \sum_a', page)
         self.assertNotIn('<em>H-1</em>', page)
         self.assertIn('<h3 class="tpl-chapter-subtitle">Foundational Terminology</h3>', page)
-        self.assertIn('<h3>A Markdown heading</h3>', page)
+        self.assertIn('<h3 class="tpl-chapter-subtitle">A Markdown heading</h3>', page)
         self.assertEqual(page.count('class="toc-link'), 2)
         self.assertIn('#### This is code, not a chapter\n$s_0$', page)
         self.assertNotIn("<script>alert('unsafe')</script>", page)
         self.assertIn('mathjax@3.2.2', page)
+
+    def test_subsection_accordion_controls(self):
+        from html.parser import HTMLParser
+
+        class Elements(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.elements = []
+
+            def handle_starttag(self, tag, attrs):
+                self.elements.append((tag, dict(attrs)))
+
+        note = self.note('AIML - RL.md')
+        note.write_text('---\ncompaulo-codex: true\n---\n'
+                        '#### MDPs and Policies\n##### Foundational Terminology\nFirst.\n'
+                        '##### Math Derivation\nSecond.\n'
+                        '#### Next Chapter\nIntro.\n##### Another Section\nThird.')
+        self.build()
+        page = (self.codex / 'pages/tech-aiml-rl.html').read_text()
+        parser = Elements()
+        parser.feed(page)
+        panels = [attrs for tag, attrs in parser.elements if tag == 'details']
+        controls = [attrs for tag, attrs in parser.elements
+                    if tag == 'button' and attrs.get('class') == 'toc-section-link']
+        self.assertEqual(len(panels), 4)
+        self.assertEqual(sum('open' in panel for panel in panels), 1)
+        self.assertEqual(panels[0]['name'], panels[1]['name'])
+        self.assertEqual({panel['id'] for panel in panels},
+                         {control['aria-controls'] for control in controls})
+        self.assertEqual(sum(control['aria-expanded'] == 'true' for control in controls), 1)
+        self.assertIn('id="ch-2-subsections" hidden', page)
+        self.assertIn('>Overview</button>', page)
 
 
 if __name__ == '__main__':

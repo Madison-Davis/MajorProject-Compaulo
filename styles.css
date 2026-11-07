@@ -1483,3 +1483,40 @@ p {
 .portfolio-page main > #feature-split {
   margin-top: 300px;
 }
+
+/* Chapter and subsection accordion controls. */
+.toc-chevron { margin-left: auto; transition: transform var(--transition); }
+.toc-link[aria-expanded="true"] .toc-chevron { transform: rotate(90deg); }
+.toc-subsections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0.75rem 1.4rem;
+  padding-left: 0.6rem;
+  border-left: 1px solid var(--color-border);
+}
+.toc-subsections[hidden] { display: none; }
+.toc-section-link {
+  padding: 0.5rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: left;
+  cursor: pointer;
+}
+.toc-section-link:hover, .toc-section-link.is-active {
+  color: var(--color-accent-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+.tpl-section { border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; }
+.tpl-section summary { cursor: pointer; }
+.tpl-section summary h3 { display: inline; }
+.tpl-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}

@@ -32,6 +32,8 @@ The build groups and sorts public notes by subtopic and title. Unchecking `compa
 
 The deployment artifact excludes the source vault. Notes render Markdown lists, headings, emphasis, code, and tables. Inline `$...$` and display `$$...$$` equations render with MathJax (loaded from a CDN). Obsidian wiki references display as plain labels. The note renderer uses `####` headings for chapters and `#####` headings for subsections. Notes without chapter headings display their body as a single chapter.
 
+Standalone editing separators (`## <wbr>`, dot-only lines such as `. . .`, and lines of two or more hyphens) are hidden from displayed notes. Code blocks and equations retain their original content.
+
 To build locally with the vault checked out:
 
 ```sh
@@ -44,3 +46,5 @@ To verify publication filtering and grouping using temporary sample notes:
 ```sh
 python3 -m unittest discover -s codex/scripts -p 'test_*.py'
 ```
+
+Chapter buttons expand their subsection list in the sidebar. Subsections (`#####` or `###` headings) display as collapsible panels, with only one open per chapter. Click an open subsection again to minimize it; introductory chapter text appears as Overview.

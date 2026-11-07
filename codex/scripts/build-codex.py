@@ -81,9 +81,22 @@ markdown = MarkdownIt('commonmark', {'html': False, 'breaks': True}).enable('tab
 markdown.use(dollarmath_plugin, renderer=render_math, allow_labels=False)
 
 
+def strip_editing_separators(body):
+    # Inspect source ranges before cleaning so literal code and math are preserved.
+    protected = set()
+    for token in markdown.parse(body):
+        if token.type in ('fence', 'code_block', 'math_block', 'math_block_label') and token.map:
+            protected.update(range(*token.map))
+    marker = re.compile(r'(?:##\s*<wbr\s*/?>|(?:\.\s*)+|-{2,})', re.IGNORECASE)
+    return '\n'.join(
+        '' if i not in protected and marker.fullmatch(line.strip()) else line
+        for i, line in enumerate(body.splitlines())
+    )
+
+
 def parse_chapters(body, title):
     # Parse before splitting so headings inside code/math blocks stay untouched.
-    tokens = markdown.parse(body)
+    tokens = markdown.parse(strip_editing_separators(body))
     starts = [i for i, token in enumerate(tokens)
               if token.type == 'heading_open' and token.tag == 'h4' and token.level == 0]
     chapters = []
@@ -93,6 +106,20 @@ def parse_chapters(body, title):
     if not chapters:
         chapters = [{'title': title, 'tokens': tokens}]
     return chapters
+
+
+def split_sections(tokens):
+    starts = [i for i, token in enumerate(tokens)
+              if token.type == 'heading_open' and token.tag in ('h3', 'h5') and token.level == 0]
+    sections = []
+    if not starts:
+        return [{'title': 'Overview', 'tokens': tokens}]
+    if starts[0]:
+        sections.append({'title': 'Overview', 'tokens': tokens[:starts[0]]})
+    for number, start in enumerate(starts):
+        end = starts[number + 1] if number + 1 < len(starts) else len(tokens)
+        sections.append({'title': tokens[start + 1].content, 'tokens': tokens[start + 3:end]})
+    return sections
 
 
 def render_body(tokens):
@@ -130,15 +157,34 @@ for md_file, raw, category, subtopic, title, output_name in notes:
 
     for i, ch in enumerate(chapters):
         active = ' is-active' if i == 0 else ''
+        chapter_id = f'ch-{i+1}'
+        expanded = 'true' if i == 0 else 'false'
+        hidden = '' if i == 0 else ' hidden'
+        sections = split_sections(ch['tokens'])
+        section_links = ''
+        body_html = ''
+        for j, section in enumerate(sections):
+            section_id = f'{chapter_id}-section-{j+1}'
+            opened = i == 0 and j == 0
+            section_links += (
+                f'<button class="toc-section-link" data-section="{section_id}" '
+                f'aria-controls="{section_id}" aria-expanded="{str(opened).lower()}">'
+                f'{html.escape(section["title"])}</button>\n'
+            )
+            body_html += (
+                f'<details class="tpl-section" id="{section_id}" name="{chapter_id}-sections"'
+                + (' open' if opened else '') + '>'
+                f'<summary><h3 class="tpl-chapter-subtitle">{html.escape(section["title"])}</h3></summary>'
+                f'<div class="tpl-section-body">{render_body(section["tokens"])}</div></details>\n'
+            )
         toc += (
-            f'        <button class="toc-link{active}" '
-            f'data-target="ch-{i+1}">\n'
-            f'          <span class="toc-num">{i+1}</span>\n'
-            f'          <span>{html.escape(ch["title"])}</span>\n'
-            f'        </button>\n'
+            f'<button class="toc-link{active}" data-target="{chapter_id}" '
+            f'aria-controls="{chapter_id}-subsections" aria-expanded="{expanded}">'
+            f'<span class="toc-num">{i+1}</span><span>{html.escape(ch["title"])}</span>'
+            f'<span class="toc-chevron" aria-hidden="true">›</span></button>\n'
+            f'<div class="toc-subsections" id="{chapter_id}-subsections"{hidden}>'
+            + section_links + '</div>\n'
         )
-
-        body_html = render_body(ch['tokens'])
 
         chapter_html += (
             f'      <div class="tpl-chapter{active}" id="ch-{i+1}">\n'

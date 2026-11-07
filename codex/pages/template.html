@@ -142,32 +142,60 @@
   </div>
 
   <script>
-    const links = document.querySelectorAll('.toc-link');
-    links.forEach(link => {
+    const chapters = document.querySelectorAll('.tpl-chapter');
+    const chapterLinks = document.querySelectorAll('.toc-link');
+    const sectionLinks = document.querySelectorAll('.toc-section-link');
+
+    function syncSections() {
+      sectionLinks.forEach(link => {
+        const section = document.getElementById(link.dataset.section);
+        link.setAttribute('aria-expanded', String(section.open));
+        link.classList.toggle('is-active', section.open);
+      });
+    }
+
+    chapterLinks.forEach(link => {
       link.addEventListener('click', () => {
-        const targetId = link.dataset.target;
-        const current  = document.querySelector('.tpl-chapter.is-active');
-        const target   = document.getElementById(targetId);
-        if (!target || current === target) return;
-
-        links.forEach(l => l.classList.remove('is-active'));
-        link.classList.add('is-active');
-
-        // Fade out current chapter
-        current.style.opacity = '0';
-        setTimeout(() => {
-          current.classList.remove('is-active');
-          current.style.opacity = '';
-
-          // Fade in next chapter
-          target.style.opacity = '0';
-          target.classList.add('is-active');
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            target.style.opacity = '1';
-          }));
-        }, 260);
+        const target = document.getElementById(link.dataset.target);
+        const expand = link.getAttribute('aria-expanded') !== 'true';
+        chapterLinks.forEach(button => {
+          const selected = button === link && expand;
+          button.setAttribute('aria-expanded', String(selected));
+          button.classList.toggle('is-active', selected);
+          document.getElementById(button.getAttribute('aria-controls')).hidden = !selected;
+        });
+        chapters.forEach(chapter => chapter.classList.toggle('is-active', chapter === target && expand));
+        if (expand && !target.querySelector('.tpl-section[open]')) {
+          const first = target.querySelector('.tpl-section');
+          if (first) first.open = true;
+        }
+        syncSections();
       });
     });
+
+    sectionLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const section = document.getElementById(link.dataset.section);
+        const expand = !section.open;
+        section.closest('.tpl-chapter').querySelectorAll('.tpl-section').forEach(other => {
+          other.open = other === section && expand;
+        });
+        syncSections();
+        if (expand) section.scrollIntoView({ block: 'nearest' });
+      });
+    });
+
+    document.querySelectorAll('.tpl-section').forEach(section => {
+      section.addEventListener('toggle', () => {
+        if (section.open) {
+          section.closest('.tpl-chapter').querySelectorAll('.tpl-section').forEach(other => {
+            if (other !== section) other.open = false;
+          });
+        }
+        syncSections();
+      });
+    });
+    syncSections();
   </script>
 
 </body>
