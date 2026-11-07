@@ -15,7 +15,7 @@ This document describes how content flows from the Obsidian vault in
 ## How to Add More Pages
 
 1. Edit notes in the `compaulo-codex` Obsidian vault under `Learn/Learn - Career/`.
-2. Put each note in `Learn - Tech`, `Learn - Sciences`, or `Learn - Business`. These folders map to the three main Codex categories; nested folders are supported.
+2. Put each note in `Learn - Tech`, `Learn - Science` (or `Learn - Sciences`), or `Learn - Business`. These folders map to the three main Codex categories; nested folders are supported. Folder matching ignores capitalization, including the vault's tracked `learn - Career` name, so builds work on both macOS and Linux. The folders and notes must be committed and pushed to the vault's `main` branch.
 3. Name the note `SubTopic - File name.md`. For example, `Learn/Learn - Career/Learn - Tech/AIML - RL.md` appears under **Tech → AIML → RL**. Other prefixes, such as `Software` and `Hardware`, create their own subsections.
 4. Add an Obsidian checkbox property named `compaulo-codex` and enable it:
 

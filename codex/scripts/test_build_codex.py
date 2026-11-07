@@ -62,6 +62,24 @@ class BuildCodexTest(unittest.TestCase):
         self.assertIn('Duplicate page URL', self.build(success=False).stderr)
         self.assertTrue((self.codex / 'pages/tech-aiml-rl.html').exists())
 
+    def test_git_folder_casing_and_singular_science(self):
+        self.note('AIML - RL.md')
+        self.note('Science - Statistics.md', category='Sciences')
+        (self.source / 'Learn - Sciences').rename(self.source / 'Learn - Science')
+        # Use an intermediate name so this also exercises the rename on macOS.
+        intermediate = self.source.with_name('career-temp')
+        self.source.rename(intermediate)
+        intermediate.rename(self.source.with_name('learn - Career'))
+        self.build()
+        self.assertTrue((self.codex / 'pages/tech-aiml-rl.html').exists())
+        self.assertTrue((self.codex / 'pages/sciences-science-statistics.html').exists())
+
+    def test_missing_career_folder_reports_available_folders(self):
+        self.source.rename(self.source.with_name('Other'))
+        error = self.build(success=False).stderr
+        self.assertIn('Available folders: Other', error)
+        self.assertIn('committed and pushed to main', error)
+
     def test_unstructured_note_and_escaped_titles(self):
         note = self.note('Hardware - A & B.md')
         note.write_text('---\ncompaulo-codex: true\n---\nA body without chapter headings.')

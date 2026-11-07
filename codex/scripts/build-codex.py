@@ -4,14 +4,35 @@ import sys
 from pathlib import Path
 
 codex_dir = Path(sys.argv[1])
-source_dir = codex_dir / 'codex-content' / 'Learn' / 'Learn - Career'
+
+
+def resolve_folder(parent, *names):
+    """Match vault folder names consistently on macOS and Linux."""
+    accepted = {name.casefold() for name in names}
+    matches = sorted(
+        (path for path in parent.iterdir()
+         if path.is_dir() and path.name.casefold() in accepted),
+        key=lambda path: path.name,
+    ) if parent.is_dir() else []
+    if len(matches) == 1:
+        return matches[0]
+    if matches:
+        raise SystemExit(f'ERROR: Ambiguous folders in {parent}: '
+                         + ', '.join(path.name for path in matches))
+    available = ', '.join(sorted(path.name for path in parent.iterdir() if path.is_dir())) \
+        if parent.is_dir() else '(parent folder missing)'
+    raise SystemExit(f'ERROR: Expected folder {" or ".join(names)} in {parent}. '
+                     f'Available folders: {available}. '
+                     'Check that the vault folders are committed and pushed to main.')
+
+
+source_dir = resolve_folder(
+    resolve_folder(codex_dir / 'codex-content', 'Learn'), 'Learn - Career'
+)
 template_path = codex_dir / 'pages' / 'template.html'
 output_dir = codex_dir / 'pages'
 index_path = codex_dir / 'index.html'
 categories = ['Tech', 'Sciences', 'Business']
-
-if not source_dir.is_dir():
-    raise SystemExit(f'ERROR: Source folder not found: {source_dir}')
 
 def is_published(raw):
     # Only an explicitly enabled top-level Obsidian checkbox publishes a note.
@@ -25,9 +46,8 @@ def discover_notes():
     notes = []
     slugs = set()
     for category in categories:
-        folder = source_dir / f'Learn - {category}'
-        if not folder.is_dir():
-            raise SystemExit(f'ERROR: Category folder not found: {folder}')
+        names = ('Learn - Sciences', 'Learn - Science') if category == 'Sciences' else (f'Learn - {category}',)
+        folder = resolve_folder(source_dir, *names)
         for path in sorted(folder.rglob('*.md')):
             raw = path.read_text(encoding='utf-8-sig')
             if not is_published(raw):
